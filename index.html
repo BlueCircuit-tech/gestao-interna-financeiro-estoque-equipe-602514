@@ -2463,6 +2463,440 @@ documentos_render();
       </script>
     </section>
 
+    <section data-tela="equipe" class="hidden">
+  <div class="px-4 pt-2 pb-6">
+    <!-- Indicadores rápidos -->
+    <div class="grid grid-cols-2 gap-3 mt-3">
+      <div class="card p-3 fade-in">
+        <p class="text-xs text-gray-500 font-body">Total de membros</p>
+        <p class="text-2xl font-display font-bold text-marca-900 mt-1">8</p>
+        <p class="text-xs text-green-600 mt-1 flex items-center gap-1">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+          +2 este mês
+        </p>
+      </div>
+      <div class="card p-3 fade-in" style="animation-delay:.08s">
+        <p class="text-xs text-gray-500 font-body">Casos ativos</p>
+        <p class="text-2xl font-display font-bold text-marca-900 mt-1">42</p>
+        <p class="text-xs text-blue-600 mt-1">Distribuídos na equipe</p>
+      </div>
+      <div class="card p-3 fade-in" style="animation-delay:.16s">
+        <p class="text-xs text-gray-500 font-body">Audiências/mês</p>
+        <p class="text-2xl font-display font-bold text-marca-900 mt-1">17</p>
+        <p class="text-xs text-amber-600 mt-1 flex items-center gap-1">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          3 hoje
+        </p>
+      </div>
+      <div class="card p-3 fade-in" style="animation-delay:.24s">
+        <p class="text-xs text-gray-500 font-body">Taxa ocupação</p>
+        <p class="text-2xl font-display font-bold text-marca-900 mt-1">87<span class="text-base">%</span></p>
+        <p class="text-xs text-green-600 mt-1">Boa performance</p>
+      </div>
+    </div>
+
+    <!-- Filtros e busca -->
+    <div class="mt-5 fade-in" style="animation-delay:.3s">
+      <div class="relative">
+        <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input id="equipe-busca" type="text" placeholder="Buscar membro por nome ou cargo..." class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm font-body focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white" oninput="equipe_filtrar()">
+      </div>
+      <div class="flex gap-2 mt-3 overflow-x-auto pb-1 -mx-1 px-1" id="equipe-filtros-cargo">
+        <button onclick="equipe_filtrarCargo('todos')" class="filtro-ativo px-3 py-1.5 rounded-full text-xs font-body font-medium whitespace-nowrap transition-all bg-marca-900 text-white" data-filtro="todos">Todos</button>
+        <button onclick="equipe_filtrarCargo('socio')" class="px-3 py-1.5 rounded-full text-xs font-body font-medium whitespace-nowrap transition-all bg-gray-100 text-gray-600 hover:bg-gray-200" data-filtro="socio">Sócios</button>
+        <button onclick="equipe_filtrarCargo('pleno')" class="px-3 py-1.5 rounded-full text-xs font-body font-medium whitespace-nowrap transition-all bg-gray-100 text-gray-600 hover:bg-gray-200" data-filtro="pleno">Adv. Plenos</button>
+        <button onclick="equipe_filtrarCargo('junior')" class="px-3 py-1.5 rounded-full text-xs font-body font-medium whitespace-nowrap transition-all bg-gray-100 text-gray-600 hover:bg-gray-200" data-filtro="junior">Adv. Júniores</button>
+        <button onclick="equipe_filtrarCargo('assistente')" class="px-3 py-1.5 rounded-full text-xs font-body font-medium whitespace-nowrap transition-all bg-gray-100 text-gray-600 hover:bg-gray-200" data-filtro="assistente">Assistentes</button>
+        <button onclick="equipe_filtrarCargo('estagiario')" class="px-3 py-1.5 rounded-full text-xs font-body font-medium whitespace-nowrap transition-all bg-gray-100 text-gray-600 hover:bg-gray-200" data-filtro="estagiario">Estagiários</button>
+      </div>
+    </div>
+
+    <!-- Lista de membros -->
+    <div class="mt-5 space-y-3" id="equipe-lista">
+    </div>
+
+    <!-- Estado vazio -->
+    <div id="equipe-vazio" class="hidden mt-8 text-center py-8">
+      <svg class="w-12 h-12 mx-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      <p class="mt-3 text-sm text-gray-500 font-body">Nenhum membro encontrado</p>
+    </div>
+
+    <!-- Botão flutuante -->
+    <button onclick="equipe_abrirAdicionar()" class="fixed bottom-6 right-6 z-30 w-14 h-14 bg-blue-600 rounded-full shadow-lg flex items-center justify-center text-white active:scale-90 transition-transform hover:bg-blue-700">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+    </button>
+  </div>
+
+  <!-- Modal Perfil do Membro -->
+  <div id="modal-perfil" class="fixed inset-0 z-40 hidden">
+    <div class="absolute inset-0 bg-black/50" onclick="fecharModal()"></div>
+    <div class="absolute bottom-0 left-0 right-0 max-w-[430px] mx-auto bg-white rounded-t-3xl max-h-[85vh] overflow-y-auto" id="modal-perfil-conteudo"></div>
+  </div>
+
+  <!-- Modal Adicionar Membro -->
+  <div id="modal-adicionar" class="fixed inset-0 z-40 hidden">
+    <div class="absolute inset-0 bg-black/50" onclick="fecharModal()"></div>
+    <div class="absolute bottom-0 left-0 right-0 max-w-[430px] mx-auto bg-white rounded-t-3xl max-h-[90vh] overflow-y-auto" id="modal-adicionar-conteudo"></div>
+  </div>
+</section>
+
+<script>
+function equipe_renderCores(cargo) {
+  const m = {
+    socio: 'bg-purple-100 text-purple-700',
+    pleno: 'bg-blue-100 text-blue-700',
+    junior: 'bg-green-100 text-green-700',
+    assistente: 'bg-amber-100 text-amber-700',
+    estagiario: 'bg-pink-100 text-pink-600',
+  };
+  return m[cargo] || 'bg-gray-100 text-gray-600';
+}
+function equipe_renderLabel(cargo) {
+  const m = { socio: 'Sócio', pleno: 'Adv. Pleno', junior: 'Adv. Júnior', assistente: 'Assistente', estagiario: 'Estagiário' };
+  return m[cargo] || cargo;
+}
+function equipe_renderIniciais(nome) {
+  return nome.split(' ').filter((_,i,a)=>i===0||i===a.length-1).map(w=>w[0]).join('').toUpperCase();
+}
+function equipe_renderAvatarBg(cargo) {
+  const m = { socio: '#7C3AED', pleno: '#2563EB', junior: '#059669', assistente: '#D97706', estagiario: '#DB2777' };
+  return m[cargo] || '#6B7280';
+}
+
+const membros = [
+  { id: 1, nome: 'Dr. Rafael Monteiro', cargo: 'socio', email: 'rafael@monteiro.adv.br', telefone: '(11) 98765-4321', oab: 'SP 123.456', casos: 14, audiencias: 5, permissoes: { financeiro: true, processos: 'edicao', relatorios: true, clientes: true, agenda: true, equipe: true }, produtividade: { casosFinalizados: 8, horasTrabalhadas: 156, taxaSucesso: 92 } },
+  { id: 2, nome: 'Dra. Camila Vasconcelos', cargo: 'pleno', email: 'camila@monteiro.adv.br', telefone: '(11) 91234-5678', oab: 'SP 234.567', casos: 9, audiencias: 4, permissoes: { financeiro: 'visualizacao', processos: 'edicao', relatorios: true, clientes: true, agenda: true, equipe: false }, produtividade: { casosFinalizados: 6, horasTrabalhadas: 142, taxaSucesso: 88 } },
+  { id: 3, nome: 'Dr. Felipe Andrade', cargo: 'pleno', email: 'felipe@monteiro.adv.br', telefone: '(11) 99876-5432', oab: 'SP 345.678', casos: 8, audiencias: 3, permissoes: { financeiro: 'visualizacao', processos: 'edicao', relatorios: true, clientes: true, agenda: true, equipe: false }, produtividade: { casosFinalizados: 5, horasTrabalhadas: 138, taxaSucesso: 85 } },
+  { id: 4, nome: 'Dra. Juliana Rocha', cargo: 'junior', email: 'juliana@monteiro.adv.br', telefone: '(11) 97654-3210', oab: 'SP 456.789', casos: 6, audiencias: 3, permissoes: { financeiro: false, processos: 'visualizacao', relatorios: false, clientes: true, agenda: true, equipe: false }, produtividade: { casosFinalizados: 4, horasTrabalhadas: 120, taxaSucesso: 78 } },
+  { id: 5, nome: 'Dr. Lucas Pereira', cargo: 'junior', email: 'lucas@monteiro.adv.br', telefone: '(11) 96543-2109', oab: 'SP 567.890', casos: 5, audiencias: 2, permissoes: { financeiro: false, processos: 'visualizacao', relatorios: false, clientes: true, agenda: true, equipe: false }, produtividade: { casosFinalizados: 3, horasTrabalhadas: 112, taxaSucesso: 75 } },
+  { id: 6, nome: 'Mariana Costa', cargo: 'assistente', email: 'mariana@monteiro.adv.br', telefone: '(11) 95432-1098', oab: null, casos: 3, audiencias: 1, permissoes: { financeiro: false, processos: 'visualizacao', relatorios: false, clientes: true, agenda: true, equipe: false }, produtividade: { casosFinalizados: 2, horasTrabalhadas: 98, taxaSucesso: 0 } },
+  { id: 7, nome: 'Pedro Henrique Lopes', cargo: 'estagiario', email: 'pedro@monteiro.adv.br', telefone: '(11) 94321-0987', oab: null, casos: 2, audiencias: 0, permissoes: { financeiro: false, processos: 'visualizacao', relatorios: false, clientes: true, agenda: true, equipe: false }, produtividade: { casosFinalizados: 1, horasTrabalhadas: 80, taxaSucesso: 0 } },
+  { id: 8, nome: 'Ana Beatriz Souza', cargo: 'assistente', email: 'ana@monteiro.adv.br', telefone: '(11) 93210-9876', oab: null, casos: 3, audiencias: 1, permissoes: { financeiro: false, processos: 'visualizacao', relatorios: false, clientes: true, agenda: true, equipe: false }, produtividade: { casosFinalizados: 2, horasTrabalhadas: 92, taxaSucesso: 0 } },
+];
+
+let equipe_filtroCargoAtual = 'todos';
+
+function equipe_listar() {
+  const busca = (document.getElementById('equipe-busca')?.value || '').toLowerCase();
+  const container = document.getElementById('equipe-lista');
+  const vazio = document.getElementById('equipe-vazio');
+  const filtrados = membros.filter(m => {
+    const matchBusca = !busca || m.nome.toLowerCase().includes(busca) || equipe_renderLabel(m.cargo).toLowerCase().includes(busca);
+    const matchCargo = equipe_filtroCargoAtual === 'todos' || m.cargo === equipe_filtroCargoAtual;
+    return matchBusca && matchCargo;
+  });
+  if (!filtrados.length) {
+    container.innerHTML = '';
+    vazio.classList.remove('hidden');
+    return;
+  }
+  vazio.classList.add('hidden');
+  container.innerHTML = filtrados.map((m, i) => {
+    const bg = equipe_renderAvatarBg(m.cargo);
+    const ini = equipe_renderIniciais(m.nome);
+    return `
+    <div class="card p-4 flex items-center gap-3.5 cursor-pointer active:scale-[0.98] transition-all fade-in" style="animation-delay:${i*0.04}s" onclick="equipe_abrirPerfil(${m.id})">
+      <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-display font-bold text-sm shrink-0" style="background:${bg}">${ini}</div>
+      <div class="flex-1 min-w-0">
+        <p class="font-display font-semibold text-sm text-gray-900 truncate">${m.nome}</p>
+        <span class="inline-block mt-0.5 px-2 py-0.5 rounded-full text-[10px] font-body font-medium ${equipe_renderCores(m.cargo)}">${equipe_renderLabel(m.cargo)}</span>
+      </div>
+      <div class="text-right shrink-0">
+        <div class="flex items-center gap-3 text-xs text-gray-500">
+          <span class="flex items-center gap-1">
+            <svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            ${m.casos}
+          </span>
+          <span class="flex items-center gap-1">
+            <svg class="w-3.5 h-3.5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            ${m.audiencias}
+          </span>
+        </div>
+      </div>
+      <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+    </div>`;
+  }).join('');
+}
+
+function equipe_filtrar() { equipe_listar(); }
+function equipe_filtrarCargo(cargo) {
+  equipe_filtroCargoAtual = cargo;
+  document.querySelectorAll('#equipe-filtros-cargo button').forEach(btn => {
+    const isActive = btn.dataset.filtro === cargo;
+    btn.className = `px-3 py-1.5 rounded-full text-xs font-body font-medium whitespace-nowrap transition-all ${isActive ? 'bg-marca-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`;
+  });
+  equipe_listar();
+}
+
+function equipe_abrirPerfil(id) {
+  const m = membros.find(x => x.id === id);
+  if (!m) return;
+  const bg = equipe_renderAvatarBg(m.cargo);
+  const ini = equipe_renderIniciais(m.nome);
+  const semOab = !m.oab;
+
+  const processos = [
+    { num: '0012345-89.2024.8.26.0100', tipo: 'Ação de Indenização', cliente: 'Tech Solutions Ltda', status: 'Em andamento' },
+    { num: '0009876-54.2024.8.26.0100', tipo: 'Reclamação Trabalhista', cliente: 'Maria Silva', status: 'Aguardando audiência' },
+    { num: '0023456-12.2024.8.26.0100', tipo: 'Contratual', cliente: 'Construtora ABC', status: 'Em andamento' },
+    { num: '0034567-78.2024.8.26.0100', tipo: 'Família', cliente: 'João Pereira', status: 'Concluído' },
+    { num: '0045678-34.2024.8.26.0100', tipo: 'Tributário', cliente: 'Comércio XYZ', status: 'Em andamento' },
+  ];
+
+  const compromissos = [
+    { data: '2025-07-15', hora: '09:00', titulo: 'Audiência — Tech Solutions', tipo: 'audiencia' },
+    { data: '2025-07-15', hora: '14:00', titulo: 'Reunião com cliente Maria Silva', tipo: 'reuniao' },
+    { data: '2025-07-16', hora: '10:30', titulo: 'Petição — Construtora ABC', tipo: 'prazo' },
+    { data: '2025-07-17', hora: '11:00', titulo: 'Mediação — Comércio XYZ', tipo: 'audiencia' },
+    { data: '2025-07-18', hora: '15:00', titulo: 'Revisão de contrato', tipo: 'reuniao' },
+  ];
+
+  const html = `
+    <div class="p-5">
+      <div class="flex items-center gap-3.5 mb-5">
+        <div class="w-16 h-16 rounded-full flex items-center justify-center text-white font-display font-bold text-lg" style="background:${bg}">${ini}</div>
+        <div>
+          <h3 class="font-display font-bold text-lg text-gray-900">${m.nome}</h3>
+          <span class="inline-block mt-1 px-2.5 py-0.5 rounded-full text-xs font-body font-medium ${equipe_renderCores(m.cargo)}">${equipe_renderLabel(m.cargo)}</span>
+        </div>
+      </div>
+      ${m.oab ? `<p class="text-xs text-gray-500 font-body mb-1"><span class="font-medium text-gray-600">OAB:</span> ${m.oab}</p>` : ''}
+      <p class="text-xs text-gray-500 font-body mb-1"><span class="font-medium text-gray-600">Email:</span> ${m.email}</p>
+      <p class="text-xs text-gray-500 font-body mb-4"><span class="font-medium text-gray-600">Tel:</span> ${m.telefone}</p>
+
+      <div class="flex gap-2 mb-5">
+        <a href="https://wa.me/55${m.telefone.replace(/\D/g,'')}" target="_blank" class="flex-1 py-2 bg-green-50 text-green-700 rounded-xl text-xs font-body font-medium text-center hover:bg-green-100 transition-colors">WhatsApp</a>
+        <a href="mailto:${m.email}" target="_blank" class="flex-1 py-2 bg-blue-50 text-blue-700 rounded-xl text-xs font-body font-medium text-center hover:bg-blue-100 transition-colors">E-mail</a>
+      </div>
+
+      <!-- Produtividade -->
+      <div class="grid grid-cols-3 gap-2 mb-5">
+        <div class="bg-gray-50 rounded-xl p-3 text-center">
+          <p class="text-lg font-display font-bold text-gray-900">${m.produtividade.casosFinalizados}</p>
+          <p class="text-[10px] text-gray-500 font-body">Finalizados</p>
+        </div>
+        <div class="bg-gray-50 rounded-xl p-3 text-center">
+          <p class="text-lg font-display font-bold text-gray-900">${m.produtividade.horasTrabalhadas}h</p>
+          <p class="text-[10px] text-gray-500 font-body">Este mês</p>
+        </div>
+        <div class="bg-gray-50 rounded-xl p-3 text-center">
+          <p class="text-lg font-display font-bold text-gray-900">${m.produtividade.taxaSucesso}%</p>
+          <p class="text-[10px] text-gray-500 font-body">Taxa sucesso</p>
+        </div>
+      </div>
+
+      <!-- Agenda pessoal -->
+      <h4 class="font-display font-semibold text-sm text-gray-800 mb-2">Agenda de Julho</h4>
+      <div class="space-y-2 mb-5">
+        ${compromissos.map(c => {
+          const icones = { audiencia: '#2563EB', reuniao: '#059669', prazo: '#D97706' };
+          const iconeSvg = c.tipo === 'audiencia' ? '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>' : c.tipo === 'reuniao' ? '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>' : '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+          const dia = new Date(c.data + 'T00:00:00').getDate();
+          return `<div class="flex items-center gap-3 bg-gray-50 rounded-xl p-2.5">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style="background:${icones[c.tipo]}15;color:${icones[c.tipo]}">${iconeSvg}</div>
+            <div class="flex-1 min-w-0">
+              <p class="text-xs font-body font-medium text-gray-800 truncate">${c.titulo}</p>
+              <p class="text-[10px] text-gray-500 font-body">${c.hora} — ${dataBR(c.data)}</p>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+
+      <!-- Processos sob responsabilidade -->
+      <h4 class="font-display font-semibold text-sm text-gray-800 mb-2">Processos (${processos.length})</h4>
+      <div class="space-y-2 mb-5">
+        ${processos.map(p => {
+          const sCor = p.status === 'Em andamento' ? 'text-blue-600 bg-blue-50' : p.status === 'Aguardando audiência' ? 'text-amber-600 bg-amber-50' : 'text-green-600 bg-green-50';
+          return `<div class="bg-gray-50 rounded-xl p-3 cursor-pointer hover:bg-gray-100 transition-colors" onclick="fecharModal();mostrarTela('clientes')">
+            <p class="text-xs font-body font-mono text-gray-500">${p.num}</p>
+            <p class="text-sm font-body font-medium text-gray-800 mt-0.5">${p.tipo}</p>
+            <div class="flex items-center justify-between mt-1.5">
+              <p class="text-xs text-gray-500 font-body">${p.cliente}</p>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-body font-medium ${sCor}">${p.status}</span>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+
+      <!-- Matriz de Permissões -->
+      <h4 class="font-display font-semibold text-sm text-gray-800 mb-2">Permissões</h4>
+      <div class="bg-gray-50 rounded-xl overflow-hidden mb-5">
+        <table class="w-full text-xs font-body">
+          <thead><tr class="bg-gray-100">
+            <th class="text-left py-2 px-3 font-medium text-gray-600">Módulo</th>
+            <th class="text-center py-2 px-2 font-medium text-gray-600">Acesso</th>
+          </tr></thead>
+          <tbody>
+            ${Object.entries(m.permissoes).map(([k,v]) => {
+              const labels = { financeiro: 'Financeiro', processos: 'Processos', relatorios: 'Relatórios', clientes: 'Clientes', agenda: 'Agenda', equipe: 'Equipe' };
+              const badgeMap = { true: 'bg-green-100 text-green-700', false: 'bg-red-100 text-red-600', 'edicao': 'bg-amber-100 text-amber-700', 'visualizacao': 'bg-blue-100 text-blue-700' };
+              const labelMap = { true: 'Completo', false: 'Sem acesso', 'edicao': 'Edição', 'visualizacao': 'Visualização' };
+              const badgeCls = badgeMap[v] || 'bg-gray-100 text-gray-600';
+              return `<tr class="border-t border-gray-200">
+                <td class="py-2 px-3 text-gray-700">${labels[k]||k}</td>
+                <td class="text-center py-2 px-2"><span class="inline-block px-2 py-0.5 rounded-full font-medium ${badgeCls}">${labelMap[v]||v}</span></td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <button onclick="fecharModal();equipe_abrirAdicionar()" class="w-full py-3 bg-blue-600 text-white rounded-xl font-body font-semibold text-sm hover:bg-blue-700 transition-colors active:scale-95">Editar Membro</button>
+      <button onclick="fecharModal();equipe_remover(${m.id})" class="w-full py-3 mt-2 text-red-600 font-body font-medium text-sm hover:bg-red-50 rounded-xl transition-colors">Remover da Equipe</button>
+      <button onclick="fecharModal()" class="w-full py-2 mt-1 text-gray-500 font-body text-sm">Fechar</button>
+    </div>`;
+
+  abrirModal(html, 'Perfil do Membro');
+}
+
+function equipe_abrirAdicionar() {
+  const html = `
+    <div class="p-5">
+      <h3 class="font-display font-bold text-lg text-gray-900 mb-4">Adicionar Membro</h3>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-body font-medium text-gray-600 mb-1">Nome completo</label>
+          <input id="add-nome" type="text" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm font-body focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Ex: Dra. Fernanda Lima">
+        </div>
+        <div>
+          <label class="block text-xs font-body font-medium text-gray-600 mb-1">E-mail</label>
+          <input id="add-email" type="email" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm font-body focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Ex: fernanda@escritorio.adv.br">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-body font-medium text-gray-600 mb-1">Telefone</label>
+            <input id="add-telefone" type="tel" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm font-body focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="(11) 91234-5678" oninput="this.value = this.value.replace(/[^\\d()\\s-]/g, '').replace(/(\\(\\d{2}\\)\\s?)(\\d{4,5})(\\d{4})/, '$1$2-$3')">
+          </div>
+          <div>
+            <label class="block text-xs font-body font-medium text-gray-600 mb-1">OAB</label>
+            <input id="add-oab" type="text" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm font-body focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="SP 000.000">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-body font-medium text-gray-600 mb-1">Cargo</label>
+          <select id="add-cargo" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm font-body focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white">
+            <option value="socio">Sócio</option>
+            <option value="pleno" selected>Advogado Pleno</option>
+            <option value="junior">Advogado Júnior</option>
+            <option value="assistente">Assistente</option>
+            <option value="estagiario">Estagiário</option>
+          </select>
+        </div>
+
+        <!-- Permissões Granulares -->
+        <div class="bg-gray-50 rounded-xl p-3">
+          <p class="text-xs font-body font-semibold text-gray-700 mb-2">Permissões</p>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-body text-gray-600">Financeiro</span>
+              <select id="add-perm-financeiro" class="text-xs border border-gray-200 rounded-lg px-2 py-1 font-body bg-white">
+                <option value="false">Sem acesso</option>
+                <option value="visualizacao">Visualização</option>
+                <option value="true">Completo</option>
+              </select>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-body text-gray-600">Processos</span>
+              <select id="add-perm-processos" class="text-xs border border-gray-200 rounded-lg px-2 py-1 font-body bg-white">
+                <option value="visualizacao">Visualização</option>
+                <option value="edicao" selected>Edição</option>
+              </select>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-body text-gray-600">Relatórios</span>
+              <select id="add-perm-relatorios" class="text-xs border border-gray-200 rounded-lg px-2 py-1 font-body bg-white">
+                <option value="false">Sem acesso</option>
+                <option value="visualizacao">Visualização</option>
+                <option value="true">Completo</option>
+              </select>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-body text-gray-600">Clientes</span>
+              <select id="add-perm-clientes" class="text-xs border border-gray-200 rounded-lg px-2 py-1 font-body bg-white">
+                <option value="visualizacao">Visualização</option>
+                <option value="true" selected>Completo</option>
+              </select>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-body text-gray-600">Agenda</span>
+              <select id="add-perm-agenda" class="text-xs border border-gray-200 rounded-lg px-2 py-1 font-body bg-white">
+                <option value="false">Sem acesso</option>
+                <option value="true" selected>Completo</option>
+              </select>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-body text-gray-600">Equipe</span>
+              <select id="add-perm-equipe" class="text-xs border border-gray-200 rounded-lg px-2 py-1 font-body bg-white">
+                <option value="false" selected>Sem acesso</option>
+                <option value="visualizacao">Visualização</option>
+                <option value="true">Completo</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button onclick="equipe_salvar()" class="w-full mt-4 py-3 bg-blue-600 text-white rounded-xl font-body font-semibold text-sm hover:bg-blue-700 transition-colors active:scale-95">Salvar Membro</button>
+      <button onclick="fecharModal()" class="w-full py-2 mt-1 text-gray-500 font-body text-sm">Cancelar</button>
+    </div>`;
+  abrirModal(html, 'Novo Membro');
+}
+
+function equipe_salvar() {
+  const nome = document.getElementById('add-nome')?.value.trim();
+  const email = document.getElementById('add-email')?.value.trim();
+  const telefone = document.getElementById('add-telefone')?.value.trim();
+  const cargo = document.getElementById('add-cargo')?.value;
+  const oab = document.getElementById('add-oab')?.value.trim();
+  if (!nome) { toast('Informe o nome do membro', 'erro'); return; }
+  if (!email) { toast('Informe o e-mail', 'erro'); return; }
+  const permissoes = {};
+  ['financeiro','processos','relatorios','clientes','agenda','equipe'].forEach(k => {
+    const v = document.getElementById('add-perm-' + k)?.value;
+    permissoes[k] = v === 'true' ? true : v === 'visualizacao' ? 'visualizacao' : v === 'edicao' ? 'edicao' : false;
+  });
+  const novo = {
+    id: Date.now(), nome, cargo, email, telefone: telefone || '(11) 00000-0000',
+    oab: oab || null, casos: 0, audiencias: 0, permissoes,
+    produtividade: { casosFinalizados: 0, horasTrabalhadas: 0, taxaSucesso: 0 }
+  };
+  membros.push(novo);
+  fecharModal();
+  equipe_listar();
+  toast('Membro adicionado com sucesso!', 'ok');
+}
+
+function equipe_remover(id) {
+  const m = membros.find(x => x.id === id);
+  if (!m) return;
+  abrirModal(`
+    <div class="p-5 text-center">
+      <div class="w-14 h-14 mx-auto bg-red-100 rounded-full flex items-center justify-center mb-3">
+        <svg class="w-7 h-7 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+      </div>
+      <h3 class="font-display font-bold text-gray-900 mb-1">Remover membro?</h3>
+      <p class="text-sm text-gray-500 font-body mb-5">${m.nome} será removido da equipe. Esta ação não pode ser desfeita.</p>
+      <button onclick="fecharModal();equipe_confirmarRemocao(${id})" class="w-full py-3 bg-red-600 text-white rounded-xl font-body font-semibold text-sm hover:bg-red-700 transition-colors active:scale-95">Sim, remover</button>
+      <button onclick="fecharModal()" class="w-full py-2 mt-2 text-gray-500 font-body text-sm">Cancelar</button>
+    </div>`, 'Confirmar Remoção');
+}
+
+function equipe_confirmarRemocao(id) {
+  const idx = membros.findIndex(x => x.id === id);
+  if (idx >= 0) { membros.splice(idx, 1); equipe_listar(); toast('Membro removido', 'info'); }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  equipe_listar();
+});
+
+// Re-renderiza quando a tela é mostrada
+const _mostrarTelaOriginal = mostrarTela;
+mostrarTela = function(id) {
+  _mostrarTelaOriginal(id);
+  if (id === 'equipe') { setTimeout(equipe_listar, 50); }
+};
+</script>
+
     <!-- TELAS -->
     </main>
 
