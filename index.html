@@ -2107,6 +2107,362 @@ documentos_render();
     })();
     </script>
 
+    <section data-tela="relatorios" class="hidden">
+      <!-- Cabeçalho da tela -->
+      <div class="px-5 pt-6 pb-3">
+        <div class="flex items-start justify-between mb-1">
+          <div>
+            <h1 class="text-2xl font-bold text-marca-900 font-display tracking-tight">Relatórios</h1>
+            <p class="text-sm text-marca-500 mt-0.5 font-body">Visão estratégica do escritório</p>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="relatorios_exportar('pdf')" class="w-10 h-10 rounded-xl bg-marca-800 text-white flex items-center justify-center active:scale-90 transition-all shadow-lg shadow-marca-900/20" title="Exportar PDF">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+            </button>
+            <button onclick="relatorios_exportar('whatsapp')" class="w-10 h-10 rounded-xl bg-green-500 text-white flex items-center justify-center active:scale-90 transition-all shadow-lg shadow-green-500/20" title="Compartilhar WhatsApp">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            </button>
+            <button onclick="relatorios_exportar('email')" class="w-10 h-10 rounded-xl bg-marca-600 text-white flex items-center justify-center active:scale-90 transition-all shadow-lg shadow-marca-600/20" title="Enviar por e-mail">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seletor de período -->
+      <div class="px-5 mb-4">
+        <div class="bg-white rounded-2xl p-1.5 flex shadow-sm border border-gray-100">
+          <button onclick="relatorios_periodo('mes')" id="periodo-mes" class="periodo-btn flex-1 py-2 px-3 rounded-xl text-sm font-semibold transition-all bg-marca-800 text-white shadow-md">Este mês</button>
+          <button onclick="relatorios_periodo('trimestre')" id="periodo-trimestre" class="periodo-btn flex-1 py-2 px-3 rounded-xl text-sm font-semibold transition-all text-marca-600 hover:bg-gray-50">Trimestre</button>
+          <button onclick="relatorios_periodo('ano')" id="periodo-ano" class="periodo-btn flex-1 py-2 px-3 rounded-xl text-sm font-semibold transition-all text-marca-600 hover:bg-gray-50">Ano</button>
+          <button onclick="relatorios_periodo('custom')" id="periodo-custom" class="periodo-btn flex-1 py-2 px-3 rounded-xl text-sm font-semibold transition-all text-marca-600 hover:bg-gray-50">Custom</button>
+        </div>
+      </div>
+
+      <!-- Cards KPI -->
+      <div class="px-5 mb-4 space-y-3">
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 active:scale-[0.98] transition-transform cursor-pointer" onclick="abrirModal(relatorios_detalheFaturamento(),'Faturamento YTD — Detalhamento')">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 rounded-xl bg-marca-800/10 flex items-center justify-center">
+                <svg class="w-6 h-6 text-marca-800" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+              <div>
+                <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Faturamento YTD</p>
+                <p class="text-xl font-bold text-marca-900 font-display">R$ 712.400</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-1 bg-green-50 text-green-700 px-2.5 py-1 rounded-lg">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5"/></svg>
+              <span class="text-sm font-bold">12,3%</span>
+            </div>
+          </div>
+          <div class="mt-3 h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-marca-800 to-marca-600 rounded-full" style="width:73%"></div>
+          </div>
+          <p class="text-xs text-gray-400 mt-1.5">73% da meta anual de R$ 975k</p>
+        </div>
+
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 active:scale-[0.98] transition-transform cursor-pointer" onclick="abrirModal(relatorios_detalheConversao(),'Taxa de Conversão — Detalhamento')">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 rounded-xl bg-marca-600/10 flex items-center justify-center">
+                <svg class="w-6 h-6 text-marca-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>
+              </div>
+              <div>
+                <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Taxa de conversão</p>
+                <p class="text-xl font-bold text-marca-900 font-display">38%</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-1 bg-green-50 text-green-700 px-2.5 py-1 rounded-lg">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5"/></svg>
+              <span class="text-sm font-bold">5,2%</span>
+            </div>
+          </div>
+          <div class="mt-3 flex items-end gap-1 h-10">
+            <div class="flex-1 bg-marca-200 rounded-sm" style="height:40%"></div>
+            <div class="flex-1 bg-marca-300 rounded-sm" style="height:55%"></div>
+            <div class="flex-1 bg-marca-400 rounded-sm" style="height:45%"></div>
+            <div class="flex-1 bg-marca-500 rounded-sm" style="height:65%"></div>
+            <div class="flex-1 bg-marca-600 rounded-sm" style="height:60%"></div>
+            <div class="flex-1 bg-marca-700 rounded-sm" style="height:75%"></div>
+            <div class="flex-1 bg-marca-800 rounded-sm" style="height:90%"></div>
+          </div>
+          <p class="text-xs text-gray-400 mt-1.5">Últimos 7 meses — tendência crescente</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 active:scale-[0.98] transition-transform cursor-pointer" onclick="abrirModal(relatorios_detalheCasos(),'Casos Fechados — Detalhamento')">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center">
+                <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+            </div>
+            <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Casos fechados</p>
+            <p class="text-2xl font-bold text-marca-900 font-display mt-0.5">14</p>
+            <p class="text-xs text-green-600 font-semibold mt-1 flex items-center gap-0.5">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5"/></svg>
+              +3 vs mês ant.
+            </p>
+          </div>
+          <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 active:scale-[0.98] transition-transform cursor-pointer" onclick="abrirModal(relatorios_detalheTicket(),'Ticket Médio — Detalhamento')">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center">
+                <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"/></svg>
+              </div>
+            </div>
+            <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Ticket médio</p>
+            <p class="text-2xl font-bold text-marca-900 font-display mt-0.5">R$ 4.850</p>
+            <p class="text-xs text-red-500 font-semibold mt-1 flex items-center gap-0.5">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
+              -2,1% vs mês ant.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráficos -->
+      <div class="px-5 mb-4">
+        <div class="grid grid-cols-2 gap-3">
+          <!-- Donut Chart — Distribuição por Área -->
+          <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+            <h3 class="text-sm font-bold text-marca-900 font-display mb-3">Áreas do Direito</h3>
+            <div class="relative flex items-center justify-center">
+              <svg viewBox="0 0 42 42" class="w-28 h-28 -rotate-90">
+                <circle cx="21" cy="21" r="15.915" fill="none" stroke="#E5E7EB" stroke-width="7"/>
+                <circle cx="21" cy="21" r="15.915" fill="none" stroke="#1E3A5F" stroke-width="7" stroke-dasharray="32 68" stroke-dashoffset="0" stroke-linecap="round"/>
+                <circle cx="21" cy="21" r="15.915" fill="none" stroke="#2563EB" stroke-width="7" stroke-dasharray="25 75" stroke-dashoffset="-32" stroke-linecap="round"/>
+                <circle cx="21" cy="21" r="15.915" fill="none" stroke="#3B82F6" stroke-width="7" stroke-dasharray="18 82" stroke-dashoffset="-57" stroke-linecap="round"/>
+                <circle cx="21" cy="21" r="15.915" fill="none" stroke="#60A5FA" stroke-width="7" stroke-dasharray="15 85" stroke-dashoffset="-75" stroke-linecap="round"/>
+                <circle cx="21" cy="21" r="15.915" fill="none" stroke="#93C5FD" stroke-width="7" stroke-dasharray="10 90" stroke-dashoffset="-90" stroke-linecap="round"/>
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div class="text-center">
+                  <p class="text-xs text-gray-400">Total</p>
+                  <p class="text-sm font-bold text-marca-900">142</p>
+                </div>
+              </div>
+            </div>
+            <div class="mt-2 space-y-1.5">
+              <div class="flex items-center justify-between text-xs"><span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-marca-800"></span>Civil</span><span class="font-semibold text-marca-900">32%</span></div>
+              <div class="flex items-center justify-between text-xs"><span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-marca-600"></span>Trabalhista</span><span class="font-semibold text-marca-900">25%</span></div>
+              <div class="flex items-center justify-between text-xs"><span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-marca-500"></span>Tributário</span><span class="font-semibold text-marca-900">18%</span></div>
+              <div class="flex items-center justify-between text-xs"><span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-marca-400"></span>Empresarial</span><span class="font-semibold text-marca-900">15%</span></div>
+              <div class="flex items-center justify-between text-xs"><span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-marca-300"></span>Família</span><span class="font-semibold text-marca-900">10%</span></div>
+            </div>
+          </div>
+
+          <!-- Line Chart — Evolução de Faturamento -->
+          <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+            <h3 class="text-sm font-bold text-marca-900 font-display mb-3">Faturamento Mensal</h3>
+            <div class="relative" style="height:150px">
+              <svg viewBox="0 0 200 120" class="w-full h-full">
+                <!-- Grid lines -->
+                <line x1="20" y1="10" x2="20" y2="100" stroke="#F3F4F6" stroke-width="1"/>
+                <line x1="20" y1="100" x2="195" y2="100" stroke="#F3F4F6" stroke-width="1"/>
+                <line x1="20" y1="70" x2="195" y2="70" stroke="#F3F4F6" stroke-width="0.5" stroke-dasharray="3,3"/>
+                <line x1="20" y1="40" x2="195" y2="40" stroke="#F3F4F6" stroke-width="0.5" stroke-dasharray="3,3"/>
+                <!-- Area fill -->
+                <path d="M36 90 L65 78 L94 70 L123 55 L152 42 L181 25 L181 100 L36 100 Z" fill="url(#areaGrad)" opacity="0.3"/>
+                <!-- Line -->
+                <polyline points="36,90 65,78 94,70 123,55 152,42 181,25" fill="none" stroke="#1E3A5F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Dots -->
+                <circle cx="36" cy="90" r="3.5" fill="#1E3A5F"/>
+                <circle cx="65" cy="78" r="3.5" fill="#1E3A5F"/>
+                <circle cx="94" cy="70" r="3.5" fill="#1E3A5F"/>
+                <circle cx="123" cy="55" r="3.5" fill="#2563EB"/>
+                <circle cx="152" cy="42" r="3.5" fill="#2563EB"/>
+                <circle cx="181" cy="25" r="5" fill="#2563EB" stroke="#fff" stroke-width="2"/>
+                <defs>
+                  <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#2563EB"/>
+                    <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div class="flex justify-between mt-1">
+                <span class="text-[10px] text-gray-400 font-semibold">Jul</span>
+                <span class="text-[10px] text-gray-400 font-semibold">Ago</span>
+                <span class="text-[10px] text-gray-400 font-semibold">Set</span>
+                <span class="text-[10px] text-gray-400 font-semibold">Out</span>
+                <span class="text-[10px] text-gray-400 font-semibold">Nov</span>
+                <span class="text-[10px] text-marca-600 font-bold">Dez</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comparativo mês a mês -->
+      <div class="px-5 mb-4">
+        <h3 class="text-sm font-bold text-marca-900 font-display mb-2.5">Comparativo Mensal</h3>
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div class="grid grid-cols-3 divide-x divide-gray-100">
+            <div class="p-3 text-center">
+              <p class="text-xs text-gray-400 font-semibold uppercase">Outubro</p>
+              <p class="text-lg font-bold text-marca-900 font-display mt-0.5">R$ 58.2k</p>
+              <p class="text-xs text-green-600 font-semibold mt-0.5">+8,1%</p>
+            </div>
+            <div class="p-3 text-center">
+              <p class="text-xs text-gray-400 font-semibold uppercase">Novembro</p>
+              <p class="text-lg font-bold text-marca-900 font-display mt-0.5">R$ 65.7k</p>
+              <p class="text-xs text-green-600 font-semibold mt-0.5">+12,9%</p>
+            </div>
+            <div class="p-3 text-center bg-marca-800/5">
+              <p class="text-xs text-marca-700 font-semibold uppercase">Dezembro</p>
+              <p class="text-lg font-bold text-marca-900 font-display mt-0.5">R$ 72.4k</p>
+              <p class="text-xs text-green-600 font-semibold mt-0.5">+10,2%</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ranking de Advogados -->
+      <div class="px-5 mb-6">
+        <div class="flex items-center justify-between mb-2.5">
+          <h3 class="text-sm font-bold text-marca-900 font-display">Produtividade — Advogados</h3>
+          <button onclick="mostrarTela('equipe')" class="text-xs text-marca-600 font-semibold hover:text-marca-800 transition-colors flex items-center gap-0.5">
+            Ver equipe
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+          </button>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden divide-y divide-gray-50">
+          <div onclick="relatorios_verAdvogado(0)" class="p-3.5 flex items-center gap-3 active:bg-gray-50 transition-colors cursor-pointer">
+            <div class="w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-xs font-bold">1º</div>
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-bold text-sm">CRM</div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-bold text-marca-900 truncate">Carolina R. Mendes</p>
+              <p class="text-xs text-gray-400">Tributário</p>
+            </div>
+            <div class="text-right">
+              <p class="text-sm font-bold text-marca-900">23 casos</p>
+              <p class="text-xs text-green-600 font-semibold">R$ 187k</p>
+            </div>
+          </div>
+          <div onclick="relatorios_verAdvogado(1)" class="p-3.5 flex items-center gap-3 active:bg-gray-50 transition-colors cursor-pointer">
+            <div class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center text-xs font-bold">2º</div>
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-marca-700 flex items-center justify-center text-white font-bold text-sm">RFS</div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-bold text-marca-900 truncate">Rafael F. Santos</p>
+              <p class="text-xs text-gray-400">Civil</p>
+            </div>
+            <div class="text-right">
+              <p class="text-sm font-bold text-marca-900">19 casos</p>
+              <p class="text-xs text-green-600 font-semibold">R$ 142k</p>
+            </div>
+          </div>
+          <div onclick="relatorios_verAdvogado(2)" class="p-3.5 flex items-center gap-3 active:bg-gray-50 transition-colors cursor-pointer">
+            <div class="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-xs font-bold">3º</div>
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white font-bold text-sm">JPL</div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-bold text-marca-900 truncate">Juliana P. Lima</p>
+              <p class="text-xs text-gray-400">Trabalhista</p>
+            </div>
+            <div class="text-right">
+              <p class="text-sm font-bold text-marca-900">17 casos</p>
+              <p class="text-xs text-green-600 font-semibold">R$ 128k</p>
+            </div>
+          </div>
+          <div onclick="relatorios_verAdvogado(3)" class="p-3.5 flex items-center gap-3 active:bg-gray-50 transition-colors cursor-pointer">
+            <div class="w-8 h-8 rounded-full bg-gray-50 text-gray-400 flex items-center justify-center text-xs font-bold">4º</div>
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-teal-400 to-emerald-600 flex items-center justify-center text-white font-bold text-sm">MFO</div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-bold text-marca-900 truncate">Marcos F. Oliveira</p>
+              <p class="text-xs text-gray-400">Empresarial</p>
+            </div>
+            <div class="text-right">
+              <p class="text-sm font-bold text-marca-900">15 casos</p>
+              <p class="text-xs text-green-600 font-semibold">R$ 98k</p>
+            </div>
+          </div>
+          <div onclick="relatorios_verAdvogado(4)" class="p-3.5 flex items-center gap-3 active:bg-gray-50 transition-colors cursor-pointer">
+            <div class="w-8 h-8 rounded-full bg-gray-50 text-gray-400 flex items-center justify-center text-xs font-bold">5º</div>
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-rose-600 flex items-center justify-center text-white font-bold text-sm">ASB</div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-bold text-marca-900 truncate">Ana S. Barbosa</p>
+              <p class="text-xs text-gray-400">Família</p>
+            </div>
+            <div class="text-right">
+              <p class="text-sm font-bold text-marca-900">12 casos</p>
+              <p class="text-xs text-green-600 font-semibold">R$ 74k</p>
+            </div>
+          </div>
+          <div onclick="relatorios_verAdvogado(5)" class="p-3.5 flex items-center gap-3 active:bg-gray-50 transition-colors cursor-pointer">
+            <div class="w-8 h-8 rounded-full bg-gray-50 text-gray-400 flex items-center justify-center text-xs font-bold">6º</div>
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-600 flex items-center justify-center text-white font-bold text-sm">PCS</div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-bold text-marca-900 truncate">Paulo C. Silva</p>
+              <p class="text-xs text-gray-400">Civil</p>
+            </div>
+            <div class="text-right">
+              <p class="text-sm font-bold text-marca-900">10 casos</p>
+              <p class="text-xs text-green-600 font-semibold">R$ 61k</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="h-6"></div>
+
+      <script>
+      (function(){
+        'use strict';
+
+        var periodoAtual = 'mes';
+
+        window.relatorios_periodo = function(p) {
+          periodoAtual = p;
+          document.querySelectorAll('.periodo-btn').forEach(function(btn){
+            btn.classList.remove('bg-marca-800','text-white','shadow-md');
+            btn.classList.add('text-marca-600');
+          });
+          var ativo = document.getElementById('periodo-' + p);
+          if(ativo){
+            ativo.classList.add('bg-marca-800','text-white','shadow-md');
+            ativo.classList.remove('text-marca-600');
+          }
+          toast('Período atualizado: ' + {mes:'Este mês',trimestre:'Trimestre',ano:'Ano',custom:'Customizado'}[p], 'info');
+        };
+
+        window.relatorios_exportar = function(tipo) {
+          var nomes = {pdf:'PDF','whatsapp':'WhatsApp','email':'E-mail'};
+          toast('Relatório enviado por ' + nomes[tipo] + ' com sucesso!', 'ok');
+        };
+
+        window.relatorios_verAdvogado = function(idx) {
+          var dados = [
+            {nome:'Carolina R. Mendes',area:'Tributário',casos:23,faturamento:'R$ 187.400',avatar:'CRM',cor:'from-amber-400 to-orange-500',taxa:'94%',tempo:'3.2 dias',clientes:18},
+            {nome:'Rafael F. Santos',area:'Civil',casos:19,faturamento:'R$ 142.600',avatar:'RFS',cor:'from-blue-400 to-marca-700',taxa:'89%',tempo:'4.1 dias',clientes:15},
+            {nome:'Juliana P. Lima',area:'Trabalhista',casos:17,faturamento:'R$ 128.000',avatar:'JPL',cor:'from-orange-400 to-red-500',taxa:'91%',tempo:'3.8 dias',clientes:14},
+            {nome:'Marcos F. Oliveira',area:'Empresarial',casos:15,faturamento:'R$ 98.300',avatar:'MFO',cor:'from-teal-400 to-emerald-600',taxa:'86%',tempo:'5.2 dias',clientes:11},
+            {nome:'Ana S. Barbosa',area:'Família',casos:12,faturamento:'R$ 74.100',avatar:'ASB',cor:'from-pink-400 to-rose-600',taxa:'92%',tempo:'2.9 dias',clientes:10},
+            {nome:'Paulo C. Silva',area:'Civil',casos:10,faturamento:'R$ 61.500',avatar:'PCS',cor:'from-indigo-400 to-purple-600',taxa:'83%',tempo:'4.7 dias',clientes:8}
+          ];
+          var d = dados[idx];
+          var html = '<div class="text-center mb-5"><div class="w-20 h-20 rounded-full bg-gradient-to-br ' + d.cor + ' flex items-center justify-center text-white font-bold text-2xl mx-auto shadow-lg">' + d.avatar + '</div><h3 class="text-lg font-bold text-marca-900 font-display mt-3">' + d.nome + '</h3><span class="inline-block bg-marca-100 text-marca-700 text-xs font-bold px-3 py-1 rounded-full mt-1">' + d.area + '</span></div><div class="grid grid-cols-2 gap-3 mb-4"><div class="bg-gray-50 rounded-xl p-3 text-center"><p class="text-xs text-gray-400 font-semibold">Casos</p><p class="text-xl font-bold text-marca-900">' + d.casos + '</p></div><div class="bg-gray-50 rounded-xl p-3 text-center"><p class="text-xs text-gray-400 font-semibold">Faturamento</p><p class="text-xl font-bold text-marca-900">' + d.faturamento + '</p></div><div class="bg-gray-50 rounded-xl p-3 text-center"><p class="text-xs text-gray-400 font-semibold">Taxa sucesso</p><p class="text-xl font-bold text-green-600">' + d.taxa + '</p></div><div class="bg-gray-50 rounded-xl p-3 text-center"><p class="text-xs text-gray-400 font-semibold">Tempo médio</p><p class="text-xl font-bold text-marca-900">' + d.tempo + '</p></div></div><button onclick="mostrarTela(\'equipe\');fecharModal();" class="w-full py-3 bg-marca-800 text-white rounded-xl font-bold text-sm active:scale-95 transition-all">Ver perfil completo</button>';
+          abrirModal(html, 'Advogado — Detalhe');
+        };
+
+        window.relatorios_detalheFaturamento = function(){
+          return '<div class="space-y-3"><div class="bg-marca-50 rounded-xl p-3"><p class="text-xs text-marca-600 font-semibold mb-1">Meta Anual</p><p class="text-lg font-bold text-marca-900">R$ 975.000</p><div class="h-2 bg-white rounded-full overflow-hidden mt-2"><div class="h-full bg-marca-800 rounded-full" style="width:73%"></div></div><p class="text-xs text-marca-500 mt-1">73% atingido — faltam R$ 262.600</p></div><div class="bg-gray-50 rounded-xl p-3"><p class="text-xs text-gray-500 font-semibold mb-1">Projeção fim do ano</p><p class="text-lg font-bold text-green-600">R$ 970.200</p><p class="text-xs text-gray-400 mt-1">Baseado na média dos últimos 6 meses</p></div></div>';
+        };
+
+        window.relatorios_detalheConversao = function(){
+          return '<div class="space-y-3"><div class="bg-green-50 rounded-xl p-3"><p class="text-xs text-green-600 font-semibold mb-1">Leads este mês</p><p class="text-lg font-bold text-green-700">47</p></div><div class="bg-marca-50 rounded-xl p-3"><p class="text-xs text-marca-600 font-semibold mb-1">Convertidos</p><p class="text-lg font-bold text-marca-900">18</p></div><div class="bg-amber-50 rounded-xl p-3"><p class="text-xs text-amber-600 font-semibold mb-1">Em andamento</p><p class="text-lg font-bold text-amber-700">12</p></div></div>';
+        };
+
+        window.relatorios_detalheCasos = function(){
+          return '<div class="space-y-2"><p class="text-sm text-gray-600 mb-2">14 casos fechados este mês. Aumento de 3 em relação a novembro.</p><div class="flex flex-wrap gap-2"><span class="badge badge-success">Fechados 14</span><span class="badge badge-info">Em andamento 28</span><span class="badge badge-warning">Aguardando 6</span></div></div>';
+        };
+
+        window.relatorios_detalheTicket = function(){
+          return '<div class="space-y-3"><div class="bg-amber-50 rounded-xl p-3"><p class="text-xs text-amber-600 font-semibold mb-1">Ticket médio</p><p class="text-lg font-bold text-amber-700">R$ 4.850</p></div><div class="bg-gray-50 rounded-xl p-3"><p class="text-xs text-gray-500 font-semibold mb-1">Maior ticket</p><p class="text-lg font-bold text-marca-900">R$ 32.000</p><p class="text-xs text-gray-400">Caso empresarial — TechSolutions</p></div><div class="bg-gray-50 rounded-xl p-3"><p class="text-xs text-gray-500 font-semibold mb-1">Menor ticket</p><p class="text-lg font-bold text-marca-900">R$ 1.200</p><p class="text-xs text-gray-400">Consulta família</p></div></div>';
+        };
+
+      })();
+      </script>
+    </section>
+
     <!-- TELAS -->
     </main>
 
