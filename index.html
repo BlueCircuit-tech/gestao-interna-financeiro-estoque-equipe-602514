@@ -774,6 +774,591 @@ function agenda_render() {
       Inativo: {badge:'bg-marca-100 text-marca-400', label:'Inativo'},
       Lead: {badge:'bg-yellow-
 
+    <section data-tela="cliente" class="hidden">
+  <div class="px-4 py-3 space-y-4 max-w-[430px] mx-auto">
+    <!-- Cabeçalho do cliente -->
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+      <div class="flex items-start gap-4">
+        <div class="w-20 h-20 rounded-full bg-marca flex items-center justify-center text-white text-2xl font-display font-bold flex-shrink-0 ring-4 ring-marca-100">
+          MR
+        </div>
+        <div class="flex-1 min-w-0 pt-1">
+          <h2 class="text-lg font-display font-bold text-marca-900 truncate">Marcelo Rodrigues</h2>
+          <p class="text-sm text-gray-500 mt-0.5">CPF: 123.456.789-00</p>
+          <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 mt-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+            Cliente ativo
+          </span>
+        </div>
+      </div>
+      <div class="flex gap-2 mt-4 overflow-x-auto pb-1 -mx-1 px-1">
+        <button onclick="abrirModal(cliente_modalProcesso(), 'Novo Processo')" class="btn text-xs px-3 py-2 rounded-xl font-medium flex items-center gap-1.5 flex-shrink-0 active:scale-95 transition-transform">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Adicionar processo
+        </button>
+        <button onclick="abrirModal(cliente_modalCobranca(), 'Lançar Cobrança')" class="btn-outline text-xs px-3 py-2 rounded-xl font-medium flex items-center gap-1.5 flex-shrink-0 active:scale-95 transition-transform" style="border:1.5px solid #2563EB;color:#2563EB;">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Lançar cobrança
+        </button>
+        <button onclick="mostrarTela('chat-suporte');toast('Chat iniciado com Marcelo','info')" class="btn-outline text-xs px-3 py-2 rounded-xl font-medium flex items-center gap-1.5 flex-shrink-0 active:scale-95 transition-transform" style="border:1.5px solid #2563EB;color:#2563EB;">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+          Mensagem
+        </button>
+        <button onclick="mostrarTela('compromisso');toast('Abrindo agenda para novo compromisso','info')" class="btn-outline text-xs px-3 py-2 rounded-xl font-medium flex items-center gap-1.5 flex-shrink-0 active:scale-95 transition-transform" style="border:1.5px solid #2563EB;color:#2563EB;">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          Agendar
+        </button>
+      </div>
+    </div>
+
+    <!-- Dados pessoais -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="px-5 py-3.5 border-b border-gray-100 flex items-center gap-2">
+        <svg class="w-4 h-4 text-marca" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+        <h3 class="text-sm font-display font-semibold text-marca-900">Dados pessoais</h3>
+      </div>
+      <div class="px-5 py-3 space-y-0">
+        <div class="flex justify-between py-2.5 border-b border-gray-50">
+          <span class="text-xs text-gray-400 uppercase tracking-wider">Nome completo</span>
+          <span class="text-sm font-medium text-gray-800">Marcelo Rodrigues da Silva</span>
+        </div>
+        <div class="flex justify-between py-2.5 border-b border-gray-50">
+          <span class="text-xs text-gray-400 uppercase tracking-wider">CPF</span>
+          <span class="text-sm font-medium text-gray-800">123.456.789-00</span>
+        </div>
+        <div class="flex justify-between py-2.5 border-b border-gray-50">
+          <span class="text-xs text-gray-400 uppercase tracking-wider">RG</span>
+          <span class="text-sm font-medium text-gray-800">12.345.678-9 SSP/SP</span>
+        </div>
+        <div class="flex justify-between py-2.5 border-b border-gray-50">
+          <span class="text-xs text-gray-400 uppercase tracking-wider">Data nasc.</span>
+          <span class="text-sm font-medium text-gray-800">15/03/1985</span>
+        </div>
+        <div class="flex justify-between py-2.5 border-b border-gray-50">
+          <span class="text-xs text-gray-400 uppercase tracking-wider">Telefone</span>
+          <span class="text-sm font-medium text-gray-800">(11) 98765-4321</span>
+        </div>
+        <div class="flex justify-between py-2.5 border-b border-gray-50">
+          <span class="text-xs text-gray-400 uppercase tracking-wider">E-mail</span>
+          <span class="text-sm font-medium text-gray-800">marcelo.r@email.com</span>
+        </div>
+        <div class="flex justify-between py-2.5">
+          <span class="text-xs text-gray-400 uppercase tracking-wider">Endereço</span>
+          <span class="text-sm font-medium text-gray-800 text-right max-w-[60%]">Rua Augusta, 1234, Jardins, SP — CEP 01413-000</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumo financeiro -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="px-5 py-3.5 border-b border-gray-100 flex items-center gap-2">
+        <svg class="w-4 h-4 text-marca" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <h3 class="text-sm font-display font-semibold text-marca-900">Resumo financeiro</h3>
+      </div>
+      <div class="grid grid-cols-3 divide-x divide-gray-100">
+        <div class="p-4 text-center">
+          <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Honorários pendentes</p>
+          <p class="text-base font-bold text-red-600">R$ 3.200,00</p>
+        </div>
+        <div class="p-4 text-center">
+          <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Recebidos em Mai/2025</p>
+          <p class="text-base font-bold text-green-600">R$ 8.750,00</p>
+        </div>
+        <div class="p-4 text-center">
+          <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Próx. cobrança</p>
+          <p class="text-sm font-bold text-marca">10/06/2025</p>
+        </div>
+      </div>
+      <!-- Mini gráfico de barras -->
+      <div class="px-5 pb-4 pt-1">
+        <div class="flex items-end gap-1.5 h-16">
+          <div class="flex-1 bg-marca-100 rounded-t-md relative group" style="height:45%"><span class="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">5.4k</span></div>
+          <div class="flex-1 bg-marca-200 rounded-t-md relative group" style="height:65%"><span class="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">7.8k</span></div>
+          <div class="flex-1 bg-marca-300 rounded-t-md relative group" style="height:40%"><span class="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">4.8k</span></div>
+          <div class="flex-1 bg-marca-200 rounded-t-md relative group" style="height:55%"><span class="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">6.6k</span></div>
+          <div class="flex-1 bg-marca-100 rounded-t-md relative group" style="height:35%"><span class="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">4.2k</span></div>
+          <div class="flex-1 bg-marca rounded-t-md relative group" style="height:80%"><span class="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">9.6k</span></div>
+          <div class="flex-1 bg-marca-400 rounded-t-md relative group" style="height:70%"><span class="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">8.4k</span></div>
+          <div class="flex-1 bg-marca-500 rounded-t-md relative group" style="height:90%"><span class="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">10.8k</span></div>
+        </div>
+        <div class="flex justify-between mt-1.5">
+          <span class="text-[9px] text-gray-400">Dez/24</span>
+          <span class="text-[9px] text-gray-400">Fev/25</span>
+          <span class="text-[9px] text-gray-400">Mai/25</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Processos vinculados -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="px-5 py-3.5 border-b border-gray-100 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-marca" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <h3 class="text-sm font-display font-semibold text-marca-900">Processos vinculados</h3>
+        </div>
+        <span class="text-xs text-gray-400">3 ativos</span>
+      </div>
+      <div class="divide-y divide-gray-50" id="lista-processos">
+        <!-- Processo 1 -->
+        <div class="cliente-processo-item px-5 py-3.5 cursor-pointer hover:bg-gray-50 transition-colors" onclick="cliente_toggleProcesso(this)">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-marca" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-marca-900 truncate">Ação de Indenização</p>
+                <p class="text-xs text-gray-400">TJSP — 0045678-32.2024.8.26.0100</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <span class="badge badge-success">Em andamento</span>
+              <svg class="w-4 h-4 text-gray-300 processo-chevron transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+          </div>
+          <div class="processo-detalhe hidden mt-3 pl-[52px] space-y-2">
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Tipo de ação</span>
+              <span class="text-gray-700 font-medium">Indenização por danos morais</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Advogado responsável</span>
+              <span class="text-gray-700 font-medium">Dr. Carlos Mendes</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Valor da causa</span>
+              <span class="text-gray-700 font-medium">R$ 150.000,00</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Próxima audiência</span>
+              <span class="text-marca font-semibold">20/06/2025 — 14:30</span>
+            </div>
+          </div>
+        </div>
+        <!-- Processo 2 -->
+        <div class="cliente-processo-item px-5 py-3.5 cursor-pointer hover:bg-gray-50 transition-colors" onclick="cliente_toggleProcesso(this)">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-marca-900 truncate">Reclamação Trabalhista</p>
+                <p class="text-xs text-gray-400">TJT — 0012345-89.2023.5.02.0061</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <span class="badge badge-warning">Aguardando</span>
+              <svg class="w-4 h-4 text-gray-300 processo-chevron transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+          </div>
+          <div class="processo-detalhe hidden mt-3 pl-[52px] space-y-2">
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Tipo de ação</span>
+              <span class="text-gray-700 font-medium">Horas extras e FGTS</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Advogado responsável</span>
+              <span class="text-gray-700 font-medium">Dra. Ana Paula</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Valor da causa</span>
+              <span class="text-gray-700 font-medium">R$ 85.000,00</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Próxima audiência</span>
+              <span class="text-amber-600 font-semibold">05/07/2025 — 09:00</span>
+            </div>
+          </div>
+        </div>
+        <!-- Processo 3 -->
+        <div class="cliente-processo-item px-5 py-3.5 cursor-pointer hover:bg-gray-50 transition-colors" onclick="cliente_toggleProcesso(this)">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-marca-900 truncate">Divórcio Consensual</p>
+                <p class="text-xs text-gray-400">TJSP — 0098765-45.2023.8.26.0500</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <span class="badge badge-success">Concluído</span>
+              <svg class="w-4 h-4 text-gray-300 processo-chevron transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+          </div>
+          <div class="processo-detalhe hidden mt-3 pl-[52px] space-y-2">
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Tipo de ação</span>
+              <span class="text-gray-700 font-medium">Divórcio consensual com partilha</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Advogado responsável</span>
+              <span class="text-gray-700 font-medium">Dr. Carlos Mendes</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Data de conclusão</span>
+              <span class="text-gray-700 font-medium">15/04/2025</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Resultado</span>
+              <span class="text-green-600 font-semibold">Homologado</span>
+            </div>
+          </div>
+        </div>
+        <!-- Processo 4 -->
+        <div class="cliente-processo-item px-5 py-3.5 cursor-pointer hover:bg-gray-50 transition-colors" onclick="cliente_toggleProcesso(this)">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-marca-900 truncate">Revisional de Contrato</p>
+                <p class="text-xs text-gray-400">TJSP — 0032100-77.2024.8.26.0100</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <span class="badge badge-error">Em recurso</span>
+              <svg class="w-4 h-4 text-gray-300 processo-chevron transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+          </div>
+          <div class="processo-detalhe hidden mt-3 pl-[52px] space-y-2">
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Tipo de ação</span>
+              <span class="text-gray-700 font-medium">Revisional de contrato bancário</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Advogado responsável</span>
+              <span class="text-gray-700 font-medium">Dra. Fernanda Lima</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Valor da causa</span>
+              <span class="text-gray-700 font-medium">R$ 45.000,00</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Próxima audiência</span>
+              <span class="text-red-500 font-semibold">12/08/2025 — 10:00</span>
+            </div>
+          </div>
+        </div>
+        <!-- Processo 5 -->
+        <div class="cliente-processo-item px-5 py-3.5 cursor-pointer hover:bg-gray-50 transition-colors" onclick="cliente_toggleProcesso(this)">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-marca-900 truncate">Inventário Extrajudicial</p>
+                <p class="text-xs text-gray-400">CNJ — 0045/2024-CJ</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <span class="badge badge-warning">Em elaboração</span>
+              <svg class="w-4 h-4 text-gray-300 processo-chevron transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+          </div>
+          <div class="processo-detalhe hidden mt-3 pl-[52px] space-y-2">
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Tipo de ação</span>
+              <span class="text-gray-700 font-medium">Inventário extrajudicial de imóvel</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Advogado responsável</span>
+              <span class="text-gray-700 font-medium">Dr. Carlos Mendes</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Valor do espólio</span>
+              <span class="text-gray-700 font-medium">R$ 620.000,00</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Prazo estimado</span>
+              <span class="text-marca font-semibold">30/06/2025</span>
+            </div>
+          </div>
+        </div>
+        <!-- Processo 6 -->
+        <div class="cliente-processo-item px-5 py-3.5 cursor-pointer hover:bg-gray-50 transition-colors" onclick="cliente_toggleProcesso(this)">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-marca-900 truncate">Usucapião Extraordinária</p>
+                <p class="text-xs text-gray-400">TJSP — 0010890-21.2025.8.26.0100</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <span class="badge badge-info">Recente</span>
+              <svg class="w-4 h-4 text-gray-300 processo-chevron transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+          </div>
+          <div class="processo-detalhe hidden mt-3 pl-[52px] space-y-2">
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Tipo de ação</span>
+              <span class="text-gray-700 font-medium">Usucapião extraordinária — 15 anos</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Advogado responsável</span>
+              <span class="text-gray-700 font-medium">Dra. Fernanda Lima</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Valor estimado do imóvel</span>
+              <span class="text-gray-700 font-medium">R$ 340.000,00</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Status</span>
+              <span class="text-teal-600 font-semibold">Protocolado — aguardando despacho</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Abas inferiores: Documentos | Linha do tempo -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="flex border-b border-gray-100">
+        <button onclick="cliente_switchAba('docs')" id="cliente-aba-docs" class="flex-1 py-3 text-sm font-medium text-center transition-colors text-marca border-b-2 border-marca">
+          📁 Documentos <span class="text-xs text-gray-400 ml-0.5" id="cliente-docs-count">(8)</span>
+        </button>
+        <button onclick="cliente_switchAba('timeline')" id="cliente-aba-timeline" class="flex-1 py-3 text-sm font-medium text-center transition-colors text-gray-400 border-b-2 border-transparent">
+          🕒 Linha do tempo
+        </button>
+      </div>
+
+      <!-- Conteúdo: Documentos -->
+      <div id="cliente-conteudo-docs" class="p-3 space-y-1.5">
+        <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer active:scale-[0.98]" onclick="mostrarTela('documentos');toast('Abrindo documento: Contrato de Honorários','info')">
+          <div class="w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-gray-800 truncate">Contrato de Honorários</p>
+            <p class="text-[10px] text-gray-400">PDF · 2.4 MB · Enviado em 10/01/2025</p>
+          </div>
+          <svg class="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </div>
+        <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer active:scale-[0.98]" onclick="mostrarTela('documentos');toast('Abrindo documento: Procuração','info')">
+          <div class="w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-gray-800 truncate">Procuração Ad Judicia</p>
+            <p class="text-[10px] text-gray-400">PDF · 890 KB · Enviado em 10/01/2025</p>
+          </div>
+          <svg class="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </div>
+        <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer active:scale-[0.98]" onclick="mostrarTela('documentos');toast('Abrindo documento: RG','info')">
+          <div class="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-gray-800 truncate">RG - Frente e Verso</p>
+            <p class="text-[10px] text-gray-400">JPG · 1.1 MB · Enviado em 10/01/2025</p>
+          </div>
+          <svg class="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </div>
+        <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer active:scale-[0.98]" onclick="mostrarTela('documentos');toast('Abrindo documento: Comprovante Residência','info')">
+          <div class="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-gray-800 truncate">Comprovante de Residência</p>
+            <p class="text-[10px] text-gray-400">PDF · 420 KB · Enviado em 15/01/2025</p>
+          </div>
+          <svg class="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </div>
+        <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer active:scale-[0.98]" onclick="mostrarTela('documentos');toast('Abrindo documento: Decisão Judicial','info')">
+          <div class="w-9 h-9 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-gray-800 truncate">Decisão Judicial - Divórcio</p>
+            <p class="text-[10px] text-gray-400">PDF · 1.8 MB · Recebido em 15/04/2025</p>
+          </div>
+          <svg class="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </div>
+        <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer active:scale-[0.98]" onclick="mostrarTela('documentos');toast('Abrindo documento: Sentença Indenização','info')">
+          <div class="w-9 h-9 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-gray-800 truncate">Sentença - Ação de Indenização</p>
+            <p class="text-[10px] text-gray-400">PDF · 3.2 MB · Recebido em 22/05/2025</p>
+          </div>
+          <svg class="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </div>
+        <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer active:scale-[0.98]" onclick="mostrarTela('documentos');toast('Abrindo documento: Petição Inicial','info')">
+          <div class="w-9 h-9 rounded-lg bg-marca-50 flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 text-marca" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-gray-800 truncate">Petição Inicial - Revisional</p>
+            <p class="text-[10px] text-gray-400">PDF · 1.5 MB · Criado em 08/04/2025</p>
+          </div>
+          <svg class="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </div>
+        <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer active:scale-[0.98]" onclick="mostrarTela('documentos');toast('Abrindo documento: Procuração Usucapião','info')">
+          <div class="w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-gray-800 truncate">Procuração - Usucapião</p>
+            <p class="text-[10px] text-gray-400">PDF · 760 KB · Enviado em 02/05/2025</p>
+          </div>
+          <svg class="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </div>
+        <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer active:scale-[0.98]" onclick="mostrarTela('documentos');toast('Abrindo documento: Laudo Pericial','info')">
+          <div class="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-gray-800 truncate">Laudo Pericial Contábil</p>
+            <p class="text-[10px] text-gray-400">PDF · 4.7 MB · Recebido em 28/05/2025</p>
+          </div>
+          <svg class="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+
+      <!-- Conteúdo: Linha do tempo -->
+      <div id="cliente-conteudo-timeline" class="p-3 space-y-0 hidden">
+        <!-- Timeline item -->
+        <div class="relative pl-6 pb-4 border-l-2 border-gray-100 ml-3">
+          <div class="absolute left-[-7px] top-1 w-3 h-3 rounded-full bg-green-400 ring-2 ring-white"></div>
+          <p class="text-xs text-gray-400 mb-0.5">Hoje, 09:15</p>
+          <p class="text-sm text-gray-800"><span class="font-semibold">Dra. Ana Paula</span> enviou mensagem: "O recurso foi protocolado ontem. Vou enviar o comprovante."</p>
+        </div>
+        <div class="relative pl-6 pb-4 border-l-2 border-gray-100 ml-3">
+          <div class="absolute left-[-7px] top-1 w-3 h-3 rounded-full bg-marca ring-2 ring-white"></div>
+          <p class="text-xs text-gray-400 mb-0.5">Ontem, 16:40</p>
+          <p class="text-sm text-gray-800"><span class="font-semibold">Dr. Carlos Mendes</span> agendou audiência para <span class="text-marca font-medium">20/06/2025 às 14:30</span></p>
+        </div>
+        <div class="relative pl-6 pb-4 border-l-2 border-gray-100 ml-3">
+          <div class="absolute left-[-7px] top-1 w-3 h-3 rounded-full bg-amber-400 ring-2 ring-white"></div>
+          <p class="text-xs text-gray-400 mb-0.5">22/05/2025, 11:20</p>
+          <p class="text-sm text-gray-800"><span class="font-semibold">Sistema</span> — Honorário de <span class="font-medium">R$ 3.200,00</span> lançado e aguardando pagamento</p>
+        </div>
+        <div class="relative pl-6 pb-4 border-l-2 border-gray-100 ml-3">
+          <div class="absolute left-[-7px] top-1 w-3 h-3 rounded-full bg-green-400 ring-2 ring-white"></div>
+          <p class="text-xs text-gray-400 mb-0.5">15/05/2025, 14:00</p>
+          <p class="text-sm text-gray-800"><span class="font-semibold">Dra. Fernanda Lima</span> adicionou documento: <em>Laudo Pericial Contábil</em></p>
+        </div>
+        <div class="relative pl-6 pb-4 border-l-2 border-gray-100 ml-3">
+          <div class="absolute left-[-7px] top-1 w-3 h-3 rounded-full bg-marca ring-2 ring-white"></div>
+          <p class="text-xs text-gray-400 mb-0.5">10/05/2025, 10:30</p>
+          <p class="text-sm text-gray-800"><span class="font-semibold">Marcelo Rodrigues</span> enviou comprovante de pagamento de <span class="font-medium">R$ 8.750,00</span></p>
+        </div>
+        <div class="relative pl-6 pb-4 border-l-2 border-gray-100 ml-3">
+          <div class="absolute left-[-7px] top-1 w-3 h-3 rounded-full bg-green-400 ring-2 ring-white"></div>
+          <p class="text-xs text-gray-400 mb-0.5">15/04/2025, 17:00</p>
+          <p class="text-sm text-gray-800"><span class="font-semibold">Sistema</span> — Processo <em>Divórcio Consensual</em> concluído com sucesso</p>
+        </div>
+        <div class="relative pl-6 border-l-2 border-gray-100 ml-3">
+          <div class="absolute left-[-7px] top-1 w-3 h-3 rounded-full bg-amber-400 ring-2 ring-white"></div>
+          <p class="text-xs text-gray-400 mb-0.5">02/04/2025, 08:45</p>
+          <p class="text-sm text-gray-800"><span class="font-semibold">Dra. Fernanda Lima</span> iniciou o processo <em>Usucapião Extraordinária</em></p>
+        </div>
+      </div>
+    </div>
+    <div class="h-6"></div>
+  </div>
+
+  <script>
+    function cliente_toggleProcesso(el) {
+      const detalhe = el.querySelector('.processo-detalhe');
+      const chevron = el.querySelector('.processo-chevron');
+      if (!detalhe) return;
+      const isOpen = !detalhe.classList.contains('hidden');
+      if (isOpen) {
+        detalhe.classList.add('hidden');
+        chevron.style.transform = '';
+      } else {
+        detalhe.classList.remove('hidden');
+        chevron.style.transform = 'rotate(180deg)';
+      }
+    }
+
+    function cliente_switchAba(aba) {
+      const docsTab = document.getElementById('cliente-aba-docs');
+      const timelineTab = document.getElementById('cliente-aba-timeline');
+      const docsContent = document.getElementById('cliente-conteudo-docs');
+      const timelineContent = document.getElementById('cliente-conteudo-timeline');
+      if (aba === 'docs') {
+        docsTab.className = 'flex-1 py-3 text-sm font-medium text-center transition-colors text-marca border-b-2 border-marca';
+        timelineTab.className = 'flex-1 py-3 text-sm font-medium text-center transition-colors text-gray-400 border-b-2 border-transparent';
+        docsContent.classList.remove('hidden');
+        timelineContent.classList.add('hidden');
+      } else {
+        timelineTab.className = 'flex-1 py-3 text-sm font-medium text-center transition-colors text-marca border-b-2 border-marca';
+        docsTab.className = 'flex-1 py-3 text-sm font-medium text-center transition-colors text-gray-400 border-b-2 border-transparent';
+        timelineContent.classList.remove('hidden');
+        docsContent.classList.add('hidden');
+      }
+    }
+
+    function cliente_modalProcesso() {
+      return `<form onsubmit="event.preventDefault(); fecharModal(); mostrarTela('clientes'); toast('Processo cadastrado com sucesso!','ok');" class="space-y-3 p-1">
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Tipo de ação</label>
+          <select class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-marca/30">
+            <option>Ação de Indenização</option><option>Reclamação Trabalhista</option><option>Divórcio</option><option>Inventário</option><option>Usucapião</option><option>Revisional de Contrato</option><option>Outro</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Vara / Tribunal</label>
+          <input type="text" placeholder="Ex: TJSP — 1ª Vara Cível" class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-marca/30">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Número do processo</label>
+          <input type="text" placeholder="0000000-00.0000.8.26.0000" class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-marca/30">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Valor da causa</label>
+          <input type="text" placeholder="R$ 0,00" class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-marca/30" oninput="this.value = this.value.replace(/[^\\d,]/g, '').replace(/(\\d)(?=(\\d{3})+(?:,|$))/g, '$1.').replace(/^/, 'R$ ');">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Advogado responsável</label>
+          <select class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-marca/30">
+            <option>Dr. Carlos Mendes</option><option>Dra. Ana Paula</option><option>Dra. Fernanda Lima</option>
+          </select>
+        </div>
+        <button type="submit" class="btn w-full py-2.5 rounded-xl text-sm font-semibold active:scale-95 transition-transform">Cadastrar processo</button>
+      </form>`;
+    }
+
+    function cliente_modalCobranca() {
+      return `<form onsubmit="event.preventDefault(); fecharModal(); toast('Cobrança de R$ 3.200,00 lançada com sucesso!','ok');" class="space-y-3 p-1">
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Descrição</label>
+          <input type="text" value="Honorários advocatícios - Maio/2025" class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-marca/30">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Valor (R$)</label>
+          <input type="text" value="R$ 3.200,00" class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-marca/30" oninput="this.value = this.value.replace(/[^\\d,]/g, '').replace(/(\\d)(?=(\\d{3})+(?:,|$))/g, '$1.').replace(/^/, 'R$ ');">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Data de vencimento</label>
+          <input type="date" value="2025-06-10" class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-marca/30">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Forma de pagamento</label>
+          <select class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-marca/30">
+            <option>Pix</option><option>Boleto bancário</option><option>Cartão de crédito</option><option>Transferência</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Observações</label>
+          <textarea rows="2" placeholder="Informações adicionais..." class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-marca/30 resize-none"></textarea>
+        </div>
+        <button type="submit" class="btn w-full py-2.5 rounded-xl text-sm font-semibold active:scale-95 transition-transform">Confirmar cobrança</button>
+      </form>`;
+    }
+  </script>
+</section>
+
     <!-- TELAS -->
     </main>
 
