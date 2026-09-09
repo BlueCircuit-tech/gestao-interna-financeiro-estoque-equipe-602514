@@ -161,7 +161,155 @@
 
     <!-- Main Content -->
     <main class="overflow-y-auto scrollbar-hide pb-24" style="height: calc(100% - 130px);">
-      <!-- TELAS -->
+      <section data-tela="painel" class="hidden fadein animate-slideup px-0 pb-4 pt-2 min-h-[calc(100vh-64px)]">
+  <div class="max-w-[430px] mx-auto w-full">
+    <!-- Sauda��o e contexto -->
+    <div class="px-4 pt-2 pb-2 flex items-center gap-3">
+      <span class="rounded-full bg-marca-100 text-marca-700 font-display font-bold text-xl w-12 h-12 flex items-center justify-center">M</span>
+      <div>
+        <h1 class="font-display text-2xl font-bold text-marca-900 leading-tight">Bom dia, Dra. Marina</h1>
+        <p class="text-marca-700 text-base leading-tight mt-0.5 font-body">Painel interno do Escrit�rio</p>
+      </div>
+    </div>
+
+    <!-- Cards de indicadores -->
+    <div class="grid grid-cols-2 gap-3 px-4 pt-2 pb-1">
+      <!-- Casos Ativos -->
+      <button onclick="mostrarTela('relatorios')" class="card flex flex-col items-start justify-between bg-gradient-to-br from-marca-50 to-marca-100 shadow-md rounded-xl p-3 transition hover:-translate-y-0.5 focus:ring-2 focus:ring-marca-200 group relative overflow-hidden">
+        <div class="flex items-center gap-2">
+          <span class="bg-marca-200 rounded-full p-2 flex items-center justify-center">
+            <svg width="22" height="22" fill="none" viewBox="0 0 24 24" class="text-marca-700"><path d="M7 7h10v10H7V7z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="3.5" y="3.5" width="17" height="17" rx="4.5" stroke="currentColor" stroke-width="1.3" opacity="0.25"/></svg>
+          </span>
+          <span class="text-marca-700 text-sm font-semibold">Casos ativos</span>
+        </div>
+        <div class="w-full flex items-center mt-2">
+          <span class="text-2xl font-display text-marca-900 font-bold mr-2">47</span>
+          <span class="badge bg-green-100 text-green-700 ml-auto text-xs flex items-center gap-1 font-medium"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M3.5 7.5L7 4l3.5 3.5" stroke="#1E693A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>+3</span>
+        </div>
+        <!-- Mini gr�fico -->
+        <svg viewBox="0 0 60 18" width="60" height="18" fill="none" class="mt-1">
+          <polyline points="2,15 14,11 26,12 38,8 50,4 58,11" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <!-- Clientes cadastrados -->
+      <button onclick="mostrarTela('clientes')" class="card flex flex-col items-start justify-between bg-gradient-to-br from-marca-50 via-marca-100 to-marca-50 shadow-md rounded-xl p-3 transition hover:-translate-y-0.5 focus:ring-2 focus:ring-marca-200 group relative overflow-hidden">
+        <div class="flex items-center gap-2">
+          <span class="bg-marca-200 rounded-full p-2 flex items-center justify-center">
+            <svg width="22" height="22" fill="none" viewBox="0 0 24 24" class="text-marca-700"><path d="M12 12c2.209 0 4-1.791 4-4s-1.791-4-4-4-4 1.791-4 4 1.791 4 4 4zm0 2c-4.418 0-8 2.015-8 4.5V21h16v-2.5c0-2.485-3.582-4.5-8-4.5z" stroke="currentColor" stroke-width="1.6"/></svg>
+          </span>
+          <span class="text-marca-700 text-sm font-semibold">Clientes</span>
+        </div>
+        <div class="w-full flex items-center mt-2">
+          <span class="text-2xl font-display text-marca-900 font-bold mr-2">128</span>
+          <span class="badge bg-marca-100 text-marca-700 ml-auto text-xs flex items-center gap-1 font-medium"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="#2563eb" opacity="0.13"/><path d="M7 3.5v7M3.5 7h7" stroke="#2563EB" stroke-width="1.7" stroke-linecap="round"/></svg>+7</span>
+        </div>
+        <svg viewBox="0 0 60 18" width="60" height="18" fill="none" class="mt-1">
+          <rect x="6" y="7" width="4" height="7" rx="2" fill="#2563EB" opacity="0.32"/>
+          <rect x="18" y="4" width="4" height="10" rx="2" fill="#2563EB" opacity="0.48"/>
+          <rect x="30" y="8" width="4" height="6" rx="2" fill="#2563EB"/>
+          <rect x="42" y="2" width="4" height="12" rx="2" fill="#2563EB" opacity="0.77"/>
+          <rect x="54" y="4" width="4" height="10" rx="2" fill="#2563EB" opacity="0.26"/>
+        </svg>
+      </button>
+      <!-- Faturamento do m�s -->
+      <button onclick="mostrarTela('financeiro')" class="card flex flex-col items-start justify-between bg-gradient-to-br from-marca-50 via-green-100 to-marca-50 shadow-md rounded-xl p-3 transition hover:-translate-y-0.5 focus:ring-2 focus:ring-green-200 group relative overflow-hidden">
+        <div class="flex items-center gap-2">
+          <span class="bg-green-200 rounded-full p-2 flex items-center justify-center">
+            <svg width="22" height="22" fill="none" viewBox="0 0 24 24" class="text-green-700"><path d="M13 5V3m0 18v-2m5-5h2m-2-3.333A6.667 6.667 0 1113 5m0 0v2.667" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </span>
+          <span class="text-green-700 text-sm font-semibold">Faturamento</span>
+        </div>
+        <div class="w-full flex items-center mt-2">
+          <span class="text-2xl font-display text-green-900 font-bold mr-2">R$ 84.500</span>
+          <span class="badge bg-green-100 text-green-700 ml-auto text-xs flex items-center gap-1 font-medium"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M7 11V3M3.5 7L7 3l3.5 4" stroke="#188850" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>+5.2%</span>
+        </div>
+        <svg viewBox="0 0 60 18" width="60" height="18" fill="none" class="mt-1">
+          <path d="M2,16 Q18,6 30,13 Q42,20 58,4" stroke="#25c481" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.7"/>
+        </svg>
+      </button>
+      <!-- Pr�ximos prazos -->
+      <button onclick="mostrarTela('agenda')" class="card flex flex-col items-start justify-between bg-gradient-to-br from-marca-50 via-marca-100 to-marca-50 shadow-md rounded-xl p-3 transition hover:-translate-y-0.5 focus:ring-2 focus:ring-marca-200 group relative overflow-hidden">
+        <div class="flex items-center gap-2">
+          <span class="bg-marca-200 rounded-full p-2 flex items-center justify-center">
+            <svg width="22" height="22" fill="none" viewBox="0 0 24 24" class="text-marca-700"><rect x="4" y="5" width="16" height="15" rx="4" stroke="currentColor" stroke-width="1.5"/><path d="M16 3v4M8 3v4" stroke="currentColor" stroke-width="1.2"/><path d="M4 10h16" stroke="currentColor" stroke-width="1.2"/></svg>
+          </span>
+          <span class="text-marca-700 text-sm font-semibold">Pr�ximos prazos</span>
+        </div>
+        <div class="w-full flex items-center mt-2">
+          <span class="text-2xl font-display text-marca-900 font-bold mr-2">12</span>
+          <span class="badge bg-marca-100 text-marca-700 ml-auto text-xs flex items-center gap-1 font-medium"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="#2563eb" opacity="0.13"/><path d="M7 4v4l3 2" stroke="#2563EB" stroke-width="1.7" stroke-linecap="round"/></svg>+2</span>
+        </div>
+        <svg width="60" height="18" fill="none" viewBox="0 0 60 18" class="mt-1">
+          <rect x="2" y="11" width="4" height="5" rx="2.5" fill="#2563EB" opacity="0.14"/>
+          <rect x="10" y="6" width="4" height="10" rx="2.5" fill="#2563EB" opacity="0.4"/>
+          <rect x="18" y="9" width="4" height="7" rx="2.5" fill="#2563EB" />
+          <rect x="26" y="4" width="4" height="12" rx="2.5" fill="#2563EB" opacity="0.65"/>
+          <rect x="34" y="10" width="4" height="6" rx="2.5" fill="#2563EB" opacity="0.4"/>
+          <rect x="42" y="12" width="4" height="4" rx="2.5" fill="#2563EB" opacity="0.2"/>
+          <rect x="50" y="7" width="4" height="9" rx="2.5" fill="#2563EB" opacity="0.3"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- A��es r�pidas -->
+    <div class="flex gap-2 w-full px-4 py-0 mt-2 mb-3">
+      <button onclick="mostrarTela('clientes')" class="btn flex-1 gap-2 !bg-gradient-to-b !from-marca-50 !to-marca-100 text-marca-800 font-semibold rounded-lg shadow-sm transition active:scale-95 group py-3">
+        <span class="bg-marca-200 rounded-full p-1.5 flex items-center justify-center">
+          <svg width="18" height="18" fill="none" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" stroke="#2563EB" stroke-width="1.4" opacity="0.22"/><path d="M10 6v8M6 10h8" stroke="#2563EB" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </span>
+        Novo cliente
+      </button>
+      <button onclick="mostrarTela('compromisso')" class="btn flex-1 gap-2 !bg-gradient-to-b !from-marca-50 !to-marca-100 text-marca-800 font-semibold rounded-lg shadow-sm transition active:scale-95 group py-3">
+        <span class="bg-marca-200 rounded-full p-1.5 flex items-center justify-center">
+          <svg width="18" height="18" fill="none" viewBox="0 0 20 20"><rect x="4" y="5" width="12" height="11" rx="4" stroke="#2563EB" stroke-width="1.2"/><path d="M14 3.5v3M6 3.5v3" stroke="#2563EB" stroke-width="1.1"/><path d="M4 9.5h12" stroke="#2563EB" stroke-width="1.1"/></svg>
+        </span>
+        Agendar compromisso
+      </button>
+      <button onclick="mostrarTela('financeiro')" class="btn flex-1 gap-2 !bg-gradient-to-b !from-green-50 !to-green-100 text-green-800 font-semibold rounded-lg shadow-sm transition active:scale-95 group py-3">
+        <span class="bg-green-100 rounded-full p-1.5 flex items-center justify-center">
+          <svg width="18" height="18" fill="none" viewBox="0 0 20 20"><path d="M10 5v10M5 10h10" stroke="#188850" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </span>
+        Lançar cobrança
+      </button>
+      <button onclick="mostrarTela('documentos')" class="btn flex-1 gap-2 !bg-gradient-to-b !from-marca-50 !to-marca-100 text-marca-800 font-semibold rounded-lg shadow-sm transition active:scale-95 group py-3">
+        <span class="bg-marca-200 rounded-full p-1.5 flex items-center justify-center">
+          <svg width="18" height="18" fill="none" viewBox="0 0 20 20"><rect x="4" y="3" width="12" height="14" rx="2" stroke="#2563EB" stroke-width="1.2"/><path d="M7.5 7.5h5M7.5 10h5M7.5 12.5h3" stroke="#2563EB" stroke-width="1.1"/></svg>
+        </span>
+        Enviar doc.
+      </button>
+    </div>
+
+    <!-- Feed de atividade recente -->
+    <div class="px-4 pt-1 pb-0">
+      <h2 class="font-display text-lg text-marca-900 font-bold mb-1 ml-0.5 tracking-tight">Atividades recentes</h2>
+      <input id="painel_busca_feed" type="text" placeholder="Buscar atividade por cliente ou termo&#8230;" class="w-full border border-marca-100 bg-marca-50 rounded-lg px-3 py-2 mb-2 text-marca-800 focus:outline-none focus:ring-2 focus:ring-marca-200 font-body placeholder-marca-300 text-sm transition" />
+      <ul id="painel_feed_lista" class="space-y-2">
+        <!-- Itens alimentados por JS -->
+      </ul>
+      <div id="painel_feed_vazio" class="hidden w-full flex-col items-center gap-2 py-7">
+        <svg width="48" height="48" fill="none" viewBox="0 0 48 48" class="mx-auto mb-2"><rect x="6" y="12" width="36" height="26" rx="4" fill="#F8FAFC" stroke="#2563EB" stroke-width="1.2"/><rect x="13" y="19" width="22" height="3" rx="1.3" fill="#2563EB" opacity="0.13"/><rect x="13" y="25" width="14" height="3" rx="1.3" fill="#2563EB" opacity="0.19"/></svg>
+        <p class="text-marca-400 text-sm text-center font-body">Nenhuma atividade encontrada.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Atividades mockadas e dados
+    const painel_feed = [
+      {
+        id: 1,
+        tipo: "audiência",
+        titulo: "Audiência remarcada para 18/03",
+        cliente: "Carvalho & Maia Ltda",
+        avatar: { cor: "bg-marca-200 text-marca-800", iniciais: "CM" },
+        data: "2024-03-14T10:13:00",
+        detalhe: `
+          <div class="flex gap-3 items-center mb-3">
+            <span class="rounded-full bg-marca-200 text-marca-800 font-display text-lg font-bold w-11 h-11 flex items-center justify-center">CM</span>
+            <div>
+              <h3 class="font-display text-lg font-bold text-marca-900 mb-0.5">
+
+    <!-- TELAS -->
     </main>
 
     <!-- Tab Bar -->
