@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LexControl - Gestão Jurídica</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            marca: {
+              50: '#EEF2F7',
+              100: '#D5E0ED',
+              200: '#ADC5D9',
+              300: '#84A7C4',
+              400: '#5C89B0',
+              500: '#3A6B9C',
+              600: '#2E5680',
+              700: '#244269',
+              800: '#1E3A5F',
+              900: '#162942',
+            },
+            accent: {
+              50: '#EFF6FF',
+              100: '#DBEAFE',
+              200: '#BFDBFE',
+              300: '#93C5FD',
+              400: '#60A5FA',
+              500: '#2563EB',
+              600: '#1D4ED8',
+              700: '#1E40AF',
+              800: '#1E3A8A',
+              900: '#1E3A5F',
+            },
+            base: '#F8FAFC',
+          },
+          fontFamily: {
+            display: ['Outfit', 'sans-serif'],
+            body: ['DM Sans', 'sans-serif'],
+          },
+          boxShadow: {
+            'app': '0 4px 20px rgba(30, 58, 95, 0.15)',
+            'card': '0 2px 8px rgba(30, 58, 95, 0.08)',
+            'card-hover': '0 8px 24px rgba(30, 58, 95, 0.12)',
+          },
+          borderRadius: {
+            'app': '24px',
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    * { -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'DM Sans', sans-serif; background: linear-gradient(135deg, #1E3A5F 0%, #2563EB 100%); min-height: 100vh; }
+    h1, h2, h3, h4, h5, h6 { font-family: 'Outfit', sans-serif; }
+
+    .screen-enter { animation: fadeSlideIn 0.3s ease-out; }
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    [data-tela]:not(.hidden) { animation: fadeSlideIn 0.3s ease-out; }
+
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .nav-item { transition: all 0.2s ease; }
+    .nav-item.ativo { transform: translateY(-2px); }
+    .nav-item.ativo svg { transform: scale(1.1); }
+    .nav-item svg { transition: transform 0.2s ease; }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 20px; border-radius: 12px; font-weight: 600; font-size: 14px; transition: all 0.2s ease; cursor: pointer; border: none; }
+    .btn-primary { background: linear-gradient(135deg, #2563EB 0%, #1E3A5F 100%); color: white; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
+    .btn-primary:active { transform: scale(0.97); }
+    .btn-secondary { background: #F8FAFC; color: #1E3A5F; border: 1px solid #E2E8F0; }
+    .btn-secondary:active { background: #E2E8F0; }
+    .btn-ghost { background: transparent; color: #64748B; }
+    .btn-ghost:active { background: #F1F5F9; }
+
+    .card { background: white; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(30, 58, 95, 0.08); }
+    .card-hover:hover { box-shadow: 0 8px 24px rgba(30, 58, 95, 0.12); transform: translateY(-2px); transition: all 0.2s ease; }
+
+    .badge { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .badge-success { background: #DCFCE7; color: #166534; }
+    .badge-warning { background: #FEF3C7; color: #92400E; }
+    .badge-error { background: #FEE2E2; color: #991B1B; }
+    .badge-info { background: #DBEAFE; color: #1E40AF; }
+
+    .avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: white; flex-shrink: 0; }
+    .avatar-lg { width: 56px; height: 56px; font-size: 18px; }
+    .avatar-sm { width: 32px; height: 32px; font-size: 12px; }
+
+    .input { width: 100%; padding: 12px 16px; border: 1px solid #E2E8F0; border-radius: 12px; font-size: 14px; outline: none; transition: all 0.2s; background: #F8FAFC; }
+    .input:focus { border-color: #2563EB; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); background: white; }
+    .input::placeholder { color: #94A3B8; }
+
+    .phone-frame { max-width: 430px; margin: 0 auto; background: #F8FAFC; border-radius: 40px; box-shadow: 0 25px 60px rgba(0,0,0,0.3); overflow: hidden; position: relative; }
+    @media (max-width: 450px) { .phone-frame { border-radius: 0; max-width: 100%; box-shadow: none; } }
+
+    .status-bar { height: 44px; background: white; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; font-size: 13px; font-weight: 600; color: #1E3A5F; }
+    .status-bar svg { width: 18px; height: 18px; }
+
+    .tab-bar { height: 72px; background: white; border-top: 1px solid #E2E8F0; display: flex; align-items: center; justify-content: space-around; padding-bottom: env(safe-area-inset-bottom, 8px); position: fixed; bottom: 0; left: 0; right: 0; max-width: 430px; margin: 0 auto; }
+    @media (max-width: 450px) { .tab-bar { max-width: 100%; } }
+
+    .list-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 12px; transition: background 0.2s; cursor: pointer; }
+    .list-item:active { background: #F1F5F9; }
+
+    .toast-container { position: fixed; top: 60px; left: 50%; transform: translateX(-50%); z-index: 1000; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+    .toast { padding: 12px 20px; border-radius: 12px; font-size: 13px; font-weight: 600; animation: toastIn 0.3s ease-out; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .toast.ok { background: #166534; color: white; }
+    .toast.erro { background: #991B1B; color: white; }
+    .toast.info { background: #1E40AF; color: white; }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    .toast.hiding { animation: toastOut 0.3s ease-out forwards; }
+    @keyframes toastOut { from { opacity: 1; } to { opacity: 0; } }
+
+    .modal-overlay { position: fixed; inset: 0; background: rgba(30, 58, 95, 0.5); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 999; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
+    .modal-content { background: white; border-radius: 20px; width: 100%; max-width: 360px; max-height: 80vh; overflow: hidden; display: flex; flex-direction: column; transform: scale(0.9); transition: transform 0.2s; }
+    .modal-overlay.open .modal-content { transform: scale(1); }
+
+    .fab { position: fixed; bottom: 90px; right: 20px; width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, #2563EB 0%, #1E3A5F 100%); color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4); cursor: pointer; z-index: 50; transition: transform 0.2s; }
+    .fab:active { transform: scale(0.95); }
+    @media (max-width: 450px) { .fab { right: 16px; bottom: 86px; } }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+  <div class="phone-frame w-full" style="height: 850px; max-height: 90vh;">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span id="clock">14:32</span>
+      <div class="flex items-center gap-3">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M2 16h2v-2H2v2zm14-4h2v-2h-2v2zm-7-8h2V2h-2v2zm-3 0h2V2H6v2zm12 0h2V2h-2v2zM2 20h2v-2H2v2zm14 0h2v-2h-2v2zm-7-4h2v-2h-2v2zM6 20h2v-2H6v2zm12 0h2v-2h-2v2zM2 12h2v-2H2v2zm14 0h2v-2h-2v2zM6 12h2v-2H6v2zm12 0h2v-2h-2v2z"/></svg>
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header class="px-5 py-4 bg-white border-b border-slate-100 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-500 to-marca-800 flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
+        </div>
+        <div>
+          <h1 class="text-lg font-display font-bold text-marca-800">LexControl</h1>
+          <p class="text-xs text-slate-400">Escritório Virtual</p>
+        </div>
+      </div>
+      <button onclick="abrirModal(notificacoesHTML, 'Notificações')" class="relative w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center">
+        <svg class="w-5 h-5 text-marca-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        <span class="absolute -top-1 -right-1 w-4 h-4 bg-accent-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">3</span>
+      </button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="overflow-y-auto scrollbar-hide pb-24" style="height: calc(100% - 130px);">
+      <!-- TELAS -->
+    </main>
+
+    <!-- Tab Bar -->
+    <nav class="tab-bar">
+      <button class="nav-item flex flex-col items-center gap-1 py-2 px-3" data-nav="painel" onclick="mostrarTela('painel')">
+        <svg class="w-6 h-6 text-slate-400" data-active="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
+        <span class="text-[10px] font-medium text-slate-400" data-active="true">Painel</span>
+      </button>
+      <button class="nav-item flex flex-col items-center gap-1 py-2 px-3" data-nav="agenda" onclick="mostrarTela('agenda')">
+        <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <span class="text-[10px] font-medium text-slate-400">Agenda</span>
+      </button>
+      <button class="nav-item flex flex-col items-center gap-1 py-2 px-3" data-nav="compromisso" onclick="mostrarTela('compromisso')">
+        <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span class="text-[10px] font-medium text-slate-400">Compromisso</span>
+      </button>
+      <button class="nav-item flex flex-col items-center gap-1 py-2 px-3" data-nav="clientes" onclick="mostrarTela('clientes')">
+        <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        <span class="text-[10px] font-medium text-slate-400">Clientes</span>
+      </button>
+      <button class="nav-item flex flex-col items-center gap-1 py-2 px-3" data-nav="financeiro" onclick="mostrarTela('financeiro')">
+        <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span class="text-[10px] font-medium text-slate-400">Financeiro</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Modal -->
+  <div id="modal" class="modal-overlay" onclick="if(event.target === this) fecharModal()">
+    <div class="modal-content">
+      <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+        <h3 id="modalTitle" class="font-display font-bold text-lg text-marca-800">Título</h3>
+        <button onclick="fecharModal()" class="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center">
+          <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="modalBody" class="p-4 overflow-y-auto"></div>
+    </div>
+  </div>
+
+  <!-- Notificações Template -->
+  <script>
+    const notificacoesHTML = `
+      <div class="space-y-3">
+        <div class="list-item bg-slate-50">
+          <div class="w-10 h-10 rounded-xl bg-accent-100 flex items-center justify-center">
+            <svg class="w-5 h-5 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <div class="flex-1">
+            <p class="text-sm font-semibold text-marca-800">Audiência tomorrow às 14h</p>
+            <p class="text-xs text-slate-500">Processo #2847 - Tribunal de Justiça</p>
+          </div>
+        </div>
+        <div class="list-item bg-slate-50">
+          <div class="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div class="flex-1">
+            <p class="text-sm font-semibold text-marca-800">Pagamento recebido</p>
+            <p class="text-xs text-slate-500">R$ 4.500,00 - Dr. Carlos Silva</p>
+          </div>
+        </div>
+        <div class="list-item bg-slate-50">
+          <div class="w-10 h-10 rounded-xl bg-yellow-100 flex items-center justify-center">
+            <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+          </div>
+          <div class="flex-1">
+            <p class="text-sm font-semibold text-marca-800">Prazo vencendo</p>
+            <p class="text-xs text-slate-500">Contrato - Maria Oliveira em 3 dias</p>
+          </div>
+        </div>
+      </div>
+    `;
+  </script>
+
+  <script>
+    // Utility Functions
+    function brl(valor) {
+      return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
+    }
+
+    function dataBR(iso) {
+      const d = new Date(iso);
+      return d.toLocaleDateString('pt-BR');
+    }
+
+    function toast(mensagem, tipo = 'info') {
+      const container = document.getElementById('toastContainer');
+      const el = document.createElement('div');
+      el.className = `toast ${tipo}`;
+      el.textContent = mensagem;
+      container.appendChild(el);
+      setTimeout(() => { el.classList.add('hiding'); }, 2700);
+      setTimeout(() => el.remove(), 3000);
+    }
+
+    function abrirModal(html, titulo = 'Modal') {
+      document.getElementById('modalTitle').textContent = titulo;
+      document.getElementById('modalBody').innerHTML = html;
+      document.getElementById('modal').classList.add('open');
+    }
+
+    function fecharModal() {
+      document.getElementById('modal').classList.remove('open');
+    }
+
+    document.addEventListener('keydown', (e) => { if(e.key === 'Escape') fecharModal(); });
+
+    // Clock
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('clock').textContent = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Router
+    function mostrarTela(id) {
+      document.querySelectorAll('[data-tela]').forEach(function (s) {
+        s.classList.toggle('hidden', s.dataset.tela !== id);
+      });
+      document.querySelectorAll('[data-nav]').forEach(function (b) {
+        const isActive = b.dataset.nav === id;
+        b.classList.toggle('ativo', isActive);
+        const svg = b.querySelector('svg');
+        const span = b.querySelector('span');
+        if (svg) svg.setAttribute('data-active', isActive);
+        if (span) span.setAttribute('data-active', isActive);
+      });
+      window.scrollTo({ top: 0 });
+
+      // Update nav colors
+      document.querySelectorAll('.nav-item').forEach(item => {
+        const svg = item.querySelector('svg');
+        const span = item.querySelector('span');
+        const isAtivo = item.classList.contains('ativo');
+        if (svg) svg.style.color = isAtivo ? '#2563EB' : '#94A3B8';
+        if (span) span.style.color = isAtivo ? '#2563EB' : '#94A3B8';
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      mostrarTela('painel');
+    });
+  </script>
+</body>
+</html>
