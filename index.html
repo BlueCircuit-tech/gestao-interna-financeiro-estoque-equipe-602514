@@ -309,6 +309,270 @@
             <div>
               <h3 class="font-display text-lg font-bold text-marca-900 mb-0.5">
 
+    <section data-tela="agenda" class="hidden fadein h-full flex flex-col overflow-hidden bg-marca-50">
+  <div class="px-5 pt-6 pb-3 flex flex-col gap-1">
+    <h1 class="font-display text-marca-900 text-2xl leading-tight">Agenda</h1>
+    <div class="text-marca-600 text-sm">Compromissos do escritório, audiências, prazos internos e reuniões.<br><span class="font-medium text-marca-700">Arraste para o lado para mudar de mês.</span></div>
+    <div class="flex items-center gap-3 mt-3">
+      <label class="text-marca-800 text-sm font-medium flex-shrink-0" for="agenda-filtro-advogado">Filtro:</label>
+      <select id="agenda-filtro-advogado" class="text-marca-900 font-body py-2 px-2.5 bg-white rounded-lg border border-marca-200 focus:ring-2 focus:ring-marca-200 transition w-full"
+        onchange="agenda_filtrar()">
+        <option value="todos">Todos os advogados</option>
+        <option value="andre">André Castro</option>
+        <option value="bruna">Bruna Lima</option>
+        <option value="carlos">Carlos Sá</option>
+      </select>
+      <button onclick="agenda_mesAnterior()" class="ml-2 p-2 rounded-md hover:bg-marca-100 active:scale-95 transition text-marca-800" title="Mês anterior">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 20 20"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16l-4-4m0 0l4-4m-4 4h12"/></svg>
+      </button>
+      <button onclick="agenda_mesProximo()" class="p-2 rounded-md hover:bg-marca-100 active:scale-95 transition text-marca-800" title="Próximo mês">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 20 20"><path stroke-linecap="round" stroke-linejoin="round" d="M7 8l4 4m0 0l-4 4m4-4H3"/></svg>
+      </button>
+    </div>
+    <div class="flex items-center mt-2 gap-3 pl-1">
+      <div class="flex items-center text-xs font-medium text-marca-800 gap-1"><span class="inline-block w-2 h-2 bg-marca-900 rounded-full mr-1"></span>Audiência</div>
+      <div class="flex items-center text-xs font-medium text-marca-700 gap-1"><span class="inline-block w-2 h-2 bg-marca-400 rounded-full mr-1"></span>Reunião</div>
+      <div class="flex items-center text-xs font-medium text-red-600 gap-1"><span class="inline-block w-2 h-2 bg-red-500 rounded-full mr-1"></span>Prazo</div>
+    </div>
+  </div>
+  <div class="flex-shrink-0 pb-2 flex flex-col items-center">
+    <div id="agenda-mes-nome" class="text-lg font-display font-semibold text-marca-900 transition text-center"></div>
+    <div class="w-full flex justify-center">
+      <div class="mt-1 px-1 w-full max-w-xs sm:max-w-sm">
+        <div class="grid grid-cols-7 gap-y-1 text-center text-marca-700 font-medium select-none">
+          <div>D</div><div>S</div><div>T</div><div>Q</div><div>Q</div><div>S</div><div>S</div>
+        </div>
+        <div id="agenda-calendario" class="grid grid-cols-7 gap-1 mt-1"></div>
+      </div>
+    </div>
+  </div>
+  <div class="flex-1 overflow-y-auto pb-2 px-1 bg-marca-50 rounded-t-2xl mt-2 shadow-inner">
+    <div class="flex flex-col h-full">
+      <div class="flex items-center px-4 pt-2 pb-1">
+        <span id="agenda-dia-titulo" class="text-marca-800 font-display text-base"></span>
+        <div id="agenda-count" class="ml-2 bg-marca-100 text-marca-700 rounded-full text-xs px-2 py-0.5 font-semibold"></div>
+        <button class="ml-auto btn btn-sm btn-marca flex items-center gap-1 active:scale-95 transition"
+          onclick="agenda_novoCompromisso()">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 20 20"><path stroke-linecap="round" stroke-linejoin="round" d="M10 5v10m5-5H5"/></svg>
+          Novo compromisso
+        </button>
+      </div>
+      <div id="agenda-lista-compromissos" class="flex-1 flex flex-col transition"></div>
+    </div>
+  </div>
+  <style>
+    [data-tela="agenda"] .compromisso:hover { background: #e6eefb; }
+    [data-tela="agenda"] .compromisso:active { scale: 0.97; }
+    [data-tela="agenda"] .compromisso-menu {
+      position: absolute; z-index: 20; right: 0.5rem; top: 2.5rem;
+      background: #fff; box-shadow: 0 4px 24px #125ac81a; border-radius: 0.75rem; min-width: 9rem;
+      animation: fadecomp 0.17s;
+    }
+    @keyframes fadecomp { from { opacity: .3; scale:0.99; } to { opacity:1;scale:1; } }
+    [data-tela="agenda"] .avatar { width: 2.25rem; height: 2.25rem; font-weight: 600; font-family: inherit; border-radius: 99px; background: linear-gradient(135deg, #1E3A5F 67%, #2563EB 100%);}
+    [data-tela="agenda"] .avatar.bg1 { background: linear-gradient(135deg, #2563EB 60%, #A7C2FC 100%);}
+    [data-tela="agenda"] .avatar.bg2 { background: linear-gradient(135deg, #F8FAFC 10%, #1E3A5F 95%);}
+    [data-tela="agenda"] .avatar.bg3 { background: linear-gradient(135deg, #ffb3bb 50%, #e84a5f 95%);}
+  </style>
+  <script>
+const agenda_usuarios = [
+  {id: "andre", nome: "André Castro", avatar: "AC", cor: "bg1"},
+  {id: "bruna", nome: "Bruna Lima", avatar: "BL", cor: "bg2"},
+  {id: "carlos", nome: "Carlos Sá", avatar: "CS", cor: "bg3"}
+];
+
+// Exemplo: cada item é um compromisso do mês
+let agenda_compromissos = [
+  {
+    id: 1, data: "2024-06-17T09:00:00", tipo: "audiencia", advogado: "andre",
+    titulo: "Audiência Trabalhista", cliente: "Marcos Silva", local: "Vara do Trabalho"
+  },
+  {
+    id: 2, data: "2024-06-17T14:30:00", tipo: "reuniao", advogado: "bruna",
+    titulo: "Reunião online", cliente: "Construtora Atlas", local: "Via Google Meet"
+  },
+  {
+    id: 3, data: "2024-06-19T10:00:00", tipo: "prazo", advogado: "carlos",
+    titulo: "Entrega defesa", cliente: "BMG Seguros", local: "Processo 0487/21"
+  },
+  {
+    id: 4, data: "2024-06-20T15:00:00", tipo: "audiencia", advogado: "bruna",
+    titulo: "Audiência", cliente: "Raphael Salles", local: "2ª Vara Civil"
+  },
+  {
+    id: 5, data: "2024-06-21T16:00:00", tipo: "reuniao", advogado: "andre",
+    titulo: "Reunião presencial", cliente: "Maria de Souza", local: "Sala de reuniões"
+  },
+  {
+    id: 6, data: "2024-06-21T13:00:00", tipo: "prazo", advogado: "andre",
+    titulo: "Prazo recurso", cliente: "Construtora Atlas", local: "Processo 9871/24"
+  },
+  {
+    id: 7, data: "2024-06-25T14:00:00", tipo: "audiencia", advogado: "carlos",
+    titulo: "Audiência Cível", cliente: "Martins Advogados", local: "Fórum Central"
+  },
+  {
+    id: 8, data: "2024-06-28T09:30:00", tipo: "reuniao", advogado: "bruna",
+    titulo: "Reunião online", cliente: "Paula Bueno", local: "Google Meet"
+  }
+];
+
+let agenda_infoMes = (() => {
+  let hoje = new Date();
+  return {mes: hoje.getMonth(), ano: hoje.getFullYear()};
+})();
+let agenda_diaSelecionado = new Date().getDate();
+let agenda_advogadoFiltro = "todos";
+let agenda_menuAbre = null;
+
+function agenda_mesAnterior() {
+  if (agenda_infoMes.mes === 0) {
+    agenda_infoMes.ano--;
+    agenda_infoMes.mes = 11;
+  } else agenda_infoMes.mes--;
+  agenda_diaSelecionado = 1;
+  agenda_render();
+}
+
+function agenda_mesProximo() {
+  if (agenda_infoMes.mes === 11) {
+    agenda_infoMes.ano++;
+    agenda_infoMes.mes = 0;
+  } else agenda_infoMes.mes++;
+  agenda_diaSelecionado = 1;
+  agenda_render();
+}
+
+function agenda_filtrar() {
+  const select = document.getElementById("agenda-filtro-advogado");
+  agenda_advogadoFiltro = select.value;
+  agenda_render();
+}
+
+function agenda_novoCompromisso() {
+  abrirModal(`
+    <form id="form-novo-compromisso" class="space-y-5 p-2">
+      <div>
+        <label class="block text-marca-800 text-sm mb-1 font-medium">Tipo</label>
+        <select required class="border-marca-300 rounded px-3 py-2 w-full bg-white" name="tipo">
+          <option value="">Selecione...</option>
+          <option value="audiencia">Audiência</option>
+          <option value="reuniao">Reunião</option>
+          <option value="prazo">Prazo interno</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-marca-800 text-sm mb-1 font-medium">Data</label>
+        <input name="data" type="date" required class="border-marca-300 rounded px-3 py-2 w-full bg-white" min="${agenda_infoMes.ano}-${String(agenda_infoMes.mes+1).padStart(2,'0')}-01" />
+      </div>
+      <div>
+        <label class="block text-marca-800 text-sm mb-1 font-medium">Horário</label>
+        <input name="hora" type="time" required class="border-marca-300 rounded px-3 py-2 w-full bg-white" />
+      </div>
+      <div>
+        <label class="block text-marca-800 text-sm mb-1 font-medium">Advogado</label>
+        <select required name="advogado" class="border-marca-300 rounded px-3 py-2 w-full bg-white">
+          <option value="">Selecione...</option>
+          ${agenda_usuarios.map(u=>`<option value="${u.id}">${u.nome}</option>`).join("")}
+        </select>
+      </div>
+      <div>
+        <label class="block text-marca-800 text-sm mb-1 font-medium">Cliente</label>
+        <input name="cliente" type="text" required class="border-marca-300 rounded px-3 py-2 w-full bg-white" />
+      </div>
+      <div>
+        <label class="block text-marca-800 text-sm mb-1 font-medium">Local/info</label>
+        <input name="local" type="text" required class="border-marca-300 rounded px-3 py-2 w-full bg-white" />
+      </div>
+      <div>
+        <label class="block text-marca-800 text-sm mb-1 font-medium">Título</label>
+        <input name="titulo" type="text" required class="border-marca-300 rounded px-3 py-2 w-full bg-white" />
+      </div>
+      <div class="pt-3 flex items-center justify-end gap-3">
+        <button type="button" onclick="fecharModal()" class="btn btn-outline text-marca-700">Cancelar</button>
+        <button type="submit" class="btn btn-marca">Salvar</button>
+      </div>
+    </form>
+    <script>
+      document.getElementById("form-novo-compromisso").onsubmit = function(e){
+        e.preventDefault();
+        const f = e.target;
+        const dt = f.data.value ? f.data.value : '${agenda_infoMes.ano}-${String(agenda_infoMes.mes+1).padStart(2,"0")}-01';
+        const hora = f.hora.value || "09:00";
+        const novo={ id:Date.now(), tipo:f.tipo.value, advogado:f.advogado.value, cliente:f.cliente.value, local:f.local.value, titulo:f.titulo.value, data:dt+'T'+hora+':00'};
+        window.agenda_compromissos.push(novo);
+        fecharModal();
+        toast('Compromisso cadastrado!', 'ok');
+        setTimeout(()=>window.agenda_render(),350);
+      }
+    <\/script>`);
+}
+
+function agenda_render() {
+  if (!document.body.contains(document.querySelector('[data-tela="agenda"]'))) return;
+  agenda_fecharMenu();
+  // Montar cabeçalho mês
+  const dataInicioMes = new Date(agenda_infoMes.ano, agenda_infoMes.mes, 1);
+  const diasNoMes = new Date(agenda_infoMes.ano, agenda_infoMes.mes+1, 0).getDate();
+  const offsetDomingo = dataInicioMes.getDay();
+  const nomeMeses = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+  document.getElementById('agenda-mes-nome').textContent =
+    nomeMeses[agenda_infoMes.mes] + " de " + agenda_infoMes.ano;
+  // Montar calendário
+  let dias = [];
+  for(let i=0;i<offsetDomingo;i++) dias.push(null);
+  for(let i=1;i<=diasNoMes;i++) dias.push(i);
+  const calEl = document.getElementById('agenda-calendario');
+  calEl.innerHTML = '';
+  const compromissosNoMes = agenda_compromissos.filter(c=>{
+    let d = new Date(c.data);
+    return d.getMonth() === agenda_infoMes.mes && d.getFullYear() === agenda_infoMes.ano &&
+      (agenda_advogadoFiltro==='todos' || c.advogado===agenda_advogadoFiltro);
+  });
+  let infoDias = {};
+  compromissosNoMes.forEach(c=>{
+    let dia = new Date(c.data).getDate();
+    if(!infoDias[dia]) infoDias[dia] = [];
+    infoDias[dia].push(c.tipo);
+  });
+  dias.forEach((dia,ix) => {
+    const diaSel = dia === agenda_diaSelecionado;
+    let cell = document.createElement("button");
+    cell.type = "button";
+    cell.className =
+      "relative w-8 h-8 rounded-md flex items-center justify-center font-semibold transition outline-none " +
+      (diaSel ? "bg-marca-300 text-marca-900 shadow-sm ring-2 ring-marca-400" :
+        "bg-white text-marca-700 hover:bg-marca-100");
+    if (dia === null) {
+      cell.disabled = true;
+      cell.className += " cursor-default opacity-0";
+      cell.tabIndex="-1";
+    } else {
+      cell.tabIndex=0;
+      cell.setAttribute("aria-label","Selecionar dia "+dia);
+      cell.onclick = ()=>{ agenda_diaSelecionado=dia; agenda_render(); }
+      // Marcação tipo compromisso
+      if (infoDias[dia]) {
+        let pos = 1;
+        let tiposUnicos = Array.from(new Set(infoDias[dia]));
+        tiposUnicos.forEach((tipo, j) => {
+          let color = tipo === "audiencia" ? "bg-marca-900"
+                    : tipo === "reuniao" ? "bg-marca-400"
+                    : "bg-red-500";
+          let b = document.createElement("span");
+          b.className = `absolute w-2 h-2 ${color} rounded-full`;
+          b.style.bottom = "2px";
+          b.style.left = (6*j+7)+"px";
+          cell.appendChild(b);
+        });
+      }
+      if (diaSel) cell.className += " scale-105 z-10";
+    }
+    if (dia) cell.textContent = dia;
+    calEl.appendChild(cell);
+  });
+  // Título dia abaixo
+
     <!-- TELAS -->
     </main>
 
