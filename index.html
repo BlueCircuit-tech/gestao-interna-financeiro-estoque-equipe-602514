@@ -1359,6 +1359,284 @@ function agenda_render() {
   </script>
 </section>
 
+    <section data-tela="documentos" class="hidden">
+  <div id="documentos-anim" class="animate-fadeIn">
+    <div class="px-4 pt-1 pb-2">
+      <h1 class="font-display text-2xl font-bold text-marca-900">Documentos</h1>
+      <p class="text-sm text-gray-500 mt-0.5">Biblioteca unificada por processo</p>
+    </div>
+
+    <div class="px-4 py-2 space-y-3">
+      <div class="relative">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input id="doc-busca" type="text" placeholder="Buscar por nome ou tag..."
+          class="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-marca-500 focus:border-transparent transition"
+          oninput="documentos_buscar(this.value)">
+      </div>
+
+      <div class="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide" id="doc-filtros-tipo">
+        <button onclick="documentos_filtrarTipo('todos')" data-filtro-tipo="todos" class="doc-filtro-btn flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition bg-marca-600 text-white">Todos</button>
+        <button onclick="documentos_filtrarTipo('contrato')" data-filtro-tipo="contrato" class="doc-filtro-btn flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition bg-gray-100 text-gray-600">Contrato</button>
+        <button onclick="documentos_filtrarTipo('procuracao')" data-filtro-tipo="procuracao" class="doc-filtro-btn flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition bg-gray-100 text-gray-600">Procuração</button>
+        <button onclick="documentos_filtrarTipo('peticao')" data-filtro-tipo="peticao" class="doc-filtro-btn flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition bg-gray-100 text-gray-600">Petição</button>
+        <button onclick="documentos_filtrarTipo('comprovante')" data-filtro-tipo="comprovante" class="doc-filtro-btn flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition bg-gray-100 text-gray-600">Comprovante</button>
+      </div>
+
+      <div class="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide" id="doc-filtros-status">
+        <button onclick="documentos_filtrarStatus('todos')" data-filtro-status="todos" class="doc-status-btn flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition bg-marca-600 text-white">Todos</button>
+        <button onclick="documentos_filtrarStatus('assinado')" data-filtro-status="assinado" class="doc-status-btn flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition bg-gray-100 text-gray-600">Assinado</button>
+        <button onclick="documentos_filtrarStatus('pendente')" data-filtro-status="pendente" class="doc-status-btn flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition bg-gray-100 text-gray-600">Pendente</button>
+        <button onclick="documentos_filtrarStatus('arquivado')" data-filtro-status="arquivado" class="doc-status-btn flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition bg-gray-100 text-gray-600">Arquivado</button>
+      </div>
+    </div>
+
+    <div class="px-4 py-1 flex items-center justify-between">
+      <span id="doc-contador" class="text-xs text-gray-500 font-medium">12 documentos</span>
+      <button onclick="documentos_upload()" class="active:scale-95 transition flex items-center gap-1 bg-marca-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-md shadow-marca-200">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        Novo
+      </button>
+    </div>
+
+    <div id="doc-grid" class="px-4 pb-24 grid grid-cols-2 gap-3"></div>
+
+    <div id="doc-vazio" class="hidden px-4 pb-24 text-center py-12">
+      <svg class="w-16 h-16 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      <p class="text-gray-500 text-sm font-medium">Nenhum documento encontrado</p>
+      <p class="text-gray-400 text-xs mt-1">Tente ajustar os filtros</p>
+    </div>
+  </div>
+</section>
+
+<script>
+const documentos_dados = [
+  { id:1, nome:'Contrato de Prestação de Serviços', tipo:'contrato', status:'assinado', cliente:'Oliveira & Filhos', processo:'001/2025', data:'2025-01-10', tags:['contrato','prestação','oliveira'], paginas:5, tam:'2.3 MB' },
+  { id:2, nome:'Procuração Judicial', tipo:'procuracao', status:'assinado', cliente:'Maria Silva', processo:'045/2025', data:'2025-01-08', tags:['procuração','maria silva'], paginas:3, tam:'1.1 MB' },
+  { id:3, nome:'Petição Inicial - Ação Trabalhista', tipo:'peticao', status:'pendente', cliente:'Carlos Mendes', processo:'078/2025', data:'2025-01-14', tags:['petição','trabalhista','mendes'], paginas:8, tam:'3.7 MB' },
+  { id:4, nome:'Comprovante Pagamento Honorários', tipo:'comprovante', status:'assinado', cliente:'TechBrasil Ltda', processo:'012/2025', data:'2025-01-05', tags:['comprovante','honorários','techbrasil'], paginas:1, tam:'340 KB' },
+  { id:5, nome:'Contrato de Locação Comercial', tipo:'contrato', status:'pendente', cliente:'Imobiliária Centro', processo:'033/2025', data:'2025-01-12', tags:['contrato','locação','imobiliária'], paginas:6, tam:'2.8 MB' },
+  { id:6, nome:'Procuração Ad Judicia', tipo:'procuracao', status:'arquivado', cliente:'Fernanda Costa', processo:'021/2024', data:'2024-11-20', tags:['procuração','fernanda','arquivado'], paginas:2, tam:'890 KB' },
+  { id:7, nome:'Petição de Recurso', tipo:'peticao', status:'pendente', cliente:'Roberto Almeida', processo:'056/2025', data:'2025-01-15', tags:['petição','recurso','almeida'], paginas:4, tam:'1.9 MB' },
+  { id:8, nome:'Contrato de Cessão de Direitos', tipo:'contrato', status:'assinado', cliente:'Patricia Neves', processo:'089/2025', data:'2025-01-03', tags:['contrato','cessão','neves'], paginas:7, tam:'3.1 MB' },
+  { id:9, nome:'Comprovante Depósito Judicial', tipo:'comprovante', status:'assinado', cliente:'Carlos Mendes', processo:'078/2025', data:'2025-01-14', tags:['comprovante','depósito','mendes'], paginas:1, tam:'210 KB' },
+  { id:10, nome:'Procuração Outorgante', tipo:'procuracao', status:'pendente', cliente:'TechBrasil Ltda', processo:'012/2025', data:'2025-01-06', tags:['procuração','techbrasil'], paginas:2, tam:'780 KB' },
+  { id:11, nome:'Petição de Contestação', tipo:'peticao', status:'assinado', cliente:'Imobiliária Centro', processo:'033/2025', data:'2025-01-11', tags:['petição','contestação','imobiliária'], paginas:6, tam:'2.5 MB' },
+  { id:12, nome:'Contrato Social - Alteração', tipo:'contrato', status:'arquivado', cliente:'Oliveira & Filhos', processo:'001/2024', data:'2024-10-15', tags:['contrato','social','oliveira','arquivado'], paginas:9, tam:'4.2 MB' },
+];
+
+const documentos_filtros = { tipo:'todos', status:'todos', busca:'' };
+const documentos_cores = { contrato:['bg-blue-500','#3B82F6'], procuracao:['bg-purple-500','#A855F7'], peticao:['bg-amber-500','#F59E0B'], comprovante:['bg-emerald-500','#10B981'] };
+const documentos_icones = { contrato:'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', procuracao:'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4', peticao:'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z', comprovante:'M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z' };
+const documentos_statusCfg = { assinado:{ label:'Assinado', cor:'bg-emerald-100 text-emerald-700', dot:'bg-emerald-500' }, pendente:{ label:'Pendente', cor:'bg-amber-100 text-amber-700', dot:'bg-amber-500' }, arquivado:{ label:'Arquivado', cor:'bg-gray-200 text-gray-600', dot:'bg-gray-400' } };
+
+function documentos_buscar(val) { documentos_filtros.busca = val.toLowerCase(); documentos_render(); }
+function documentos_filtrarTipo(t) { documentos_filtros.tipo = t; document.querySelectorAll('.doc-filtro-btn').forEach(b=>{ const a=b.dataset.filtroTipo===t?'bg-marca-600 text-white':'bg-gray-100 text-gray-600'; b.className='doc-filtro-btn flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition '+a; }); documentos_render(); }
+function documentos_filtrarStatus(s) { documentos_filtros.status = s; document.querySelectorAll('.doc-status-btn').forEach(b=>{ const a=b.dataset.filtroStatus===s?'bg-marca-600 text-white':'bg-gray-100 text-gray-600'; b.className='doc-status-btn flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition '+a; }); documentos_render(); }
+
+function documentos_render() {
+  const g = document.getElementById('doc-grid');
+  const v = document.getElementById('doc-vazio');
+  const c = document.getElementById('doc-contador');
+  let itens = documentos_dados;
+  if (documentos_filtros.tipo !== 'todos') itens = itens.filter(d=>d.tipo===documentos_filtros.tipo);
+  if (documentos_filtros.status !== 'todos') itens = itens.filter(d=>d.status===documentos_filtros.status);
+  if (documentos_filtros.busca) itens = itens.filter(d=> d.nome.toLowerCase().includes(documentos_filtros.busca) || d.tags.some(t=>t.includes(documentos_filtros.busca)) );
+  c.textContent = itens.length + ' documento' + (itens.length!==1?'s':'');
+  if (!itens.length) { g.classList.add('hidden'); v.classList.remove('hidden'); return; }
+  g.classList.remove('hidden'); v.classList.add('hidden');
+  g.innerHTML = itens.map(d => {
+    const sc = documentos_statusCfg[d.status]; const cc = documentos_cores[d.tipo];
+    return `<div onclick="documentos_abrir(${d.id})" class="cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden active:scale-[0.97] transition group">
+      <div class="relative aspect-[3/4] flex flex-col items-center justify-center p-3" style="background:linear-gradient(135deg, ${cc[1]}15, ${cc[1]}08)">
+        <div class="${cc[0]} w-12 h-12 rounded-xl flex items-center justify-center shadow-lg mb-2">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${documentos_icones[d.tipo]}"/></svg>
+        </div>
+        <div class="w-full bg-white/80 rounded-md p-1.5 shadow-sm">
+          <div class="flex gap-1 mb-1"><div class="h-1 flex-1 rounded bg-gray-300"></div><div class="h-1 w-4 rounded bg-gray-300"></div></div>
+          <div class="space-y-0.5">${Array.from({length:3},()=>'<div class="h-0.5 rounded bg-gray-200 w-full"></div>').join('')}</div>
+        </div>
+        <span class="absolute top-2 right-2 ${sc.cor} text-[10px] font-bold px-2 py-0.5 rounded-full">${sc.label}</span>
+      </div>
+      <div class="p-2.5">
+        <p class="text-xs font-semibold text-marca-900 line-clamp-2 leading-snug">${d.nome}</p>
+        <p class="text-[11px] text-gray-500 mt-1">${d.cliente}</p>
+        <div class="flex items-center justify-between mt-1.5">
+          <span class="text-[10px] text-gray-400">${d.data}</span>
+          <span class="text-[10px] text-gray-400">${d.paginas}p · ${d.tam}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function documentos_abrir(id) {
+  const d = documentos_dados.find(x=>x.id===id);
+  if (!d) return;
+  const sc = documentos_statusCfg[d.status]; const cc = documentos_cores[d.tipo];
+  const html = `<div class="p-5 space-y-4">
+    <div class="flex items-start gap-3">
+      <div class="${cc[0]} w-14 h-14 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${documentos_icones[d.tipo]}"/></svg>
+      </div>
+      <div class="flex-1 min-w-0">
+        <h3 class="font-display font-bold text-marca-900 text-base leading-snug">${d.nome}</h3>
+        <p class="text-xs text-gray-500 mt-0.5">${d.cliente} · ${d.processo}</p>
+        <span class="inline-block mt-1 ${sc.cor} text-[11px] font-bold px-2.5 py-0.5 rounded-full">${sc.label}</span>
+      </div>
+    </div>
+    <div class="bg-gray-50 rounded-xl p-3 space-y-2 text-xs">
+      <div class="flex justify-between"><span class="text-gray-500">Tipo</span><span class="font-medium text-marca-900 capitalize">${d.tipo}</span></div>
+      <div class="flex justify-between"><span class="text-gray-500">Data</span><span class="font-medium text-marca-900">${dataBR(d.data)}</span></div>
+      <div class="flex justify-between"><span class="text-gray-500">Páginas</span><span class="font-medium text-marca-900">${d.paginas}</span></div>
+      <div class="flex justify-between"><span class="text-gray-500">Tamanho</span><span class="font-medium text-marca-900">${d.tam}</span></div>
+      <div class="flex justify-between"><span class="text-gray-500">Processo</span><span class="font-medium text-marca-900">${d.processo}</span></div>
+    </div>
+    <div class="flex flex-wrap gap-1.5">${d.tags.map(t=>'<span class="bg-marca-50 text-marca-700 text-[11px] font-medium px-2.5 py-1 rounded-full">#'+t+'</span>').join('')}</div>
+    <div class="bg-blue-50 border border-blue-100 rounded-xl p-3">
+      <p class="text-xs text-blue-800 font-medium mb-2">📋 Histórico de versões</p>
+      <div class="space-y-1.5">
+        <div class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div><span class="text-xs text-gray-600">Versão atual — ${d.status==='assinado'?'versão final assinada':d.status==='pendente'?'aguardando assinatura':'arquivada'}</span></div>
+        ${d.status!=='arquivado'?'<div class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-gray-400"></div><span class="text-xs text-gray-400">Versão anterior — ${dataBR(new Date(d.data).toISOString().split('T')[0])}</span></div>':''}
+      </div>
+    </div>
+    <div class="flex gap-2 pt-1">
+      <button onclick="documentos_visualizar(${d.id})" class="flex-1 bg-marca-600 text-white py-3 rounded-xl text-sm font-semibold active:scale-95 transition shadow-md">Visualizar</button>
+      <button onclick="documentos_compartilhar(${d.id})" class="px-4 bg-gray-100 text-gray-700 rounded-xl active:scale-95 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+      </button>
+    </div>
+  </div>`;
+  abrirModal(html, 'Detalhes do Documento');
+}
+
+function documentos_visualizar(id) {
+  fecharModal();
+  const d = documentos_dados.find(x=>x.id===id);
+  if (!d) return;
+  const cc = documentos_cores[d.tipo];
+  const viewer = document.createElement('div');
+  viewer.id = 'doc-viewer';
+  viewer.className = 'fixed inset-0 z-[70] bg-marca-900 flex flex-col';
+  viewer.innerHTML = `
+    <div class="flex items-center justify-between px-4 py-3 bg-marca-800/80 backdrop-blur">
+      <button onclick="documentos_fecharViewer()" class="text-white/80 hover:text-white transition flex items-center gap-1 text-sm"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>Voltar</button>
+      <span class="text-white text-sm font-medium truncate mx-4">${d.nome}</span>
+      <button onclick="documentos_compartilhar(${d.id});documentos_fecharViewer();" class="text-white/80 hover:text-white transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg></button>
+    </div>
+    <div id="doc-viewer-content" class="flex-1 overflow-auto flex items-center justify-center p-4">
+      <div id="doc-viewer-pagina" class="bg-white rounded-lg shadow-2xl w-full max-w-sm aspect-[3/4] flex flex-col items-center justify-center p-6 transition-transform">
+        <div class="${cc[0]} w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg mb-4">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${documentos_icones[d.tipo]}"/></svg>
+        </div>
+        <p class="text-sm font-semibold text-gray-800 text-center">${d.nome}</p>
+        <p class="text-xs text-gray-500 mt-1">${d.cliente}</p>
+        <div class="w-full mt-4 space-y-1.5">${Array.from({length:8},()=>'<div class="h-1 rounded bg-gray-200 w-full"></div>').join('')}</div>
+        <div class="w-full mt-2 space-y-1.5">${Array.from({length:5},()=>'<div class="h-1 rounded bg-gray-100 '+(Math.random()>0.3?'w-full':'w-4/5')+'"></div>').join('')}</div>
+      </div>
+    </div>
+    <div class="bg-marca-800/80 backdrop-blur px-4 py-3 flex items-center justify-between">
+      <button onclick="documentos_zoom(-0.2)" class="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition text-lg font-bold">−</button>
+      <span id="doc-zoom-label" class="text-white text-sm font-medium">100%</span>
+      <button onclick="documentos_zoom(0.2)" class="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition text-lg font-bold">+</button>
+      <div class="flex-1 mx-4 h-1 bg-white/20 rounded-full"><div id="doc-zoom-bar" class="h-full bg-marca-400 rounded-full transition-all" style="width:33%"></div></div>
+      <span id="doc-pagina-label" class="text-white text-sm">1/${d.paginas}</span>
+    </div>`;
+  document.body.appendChild(viewer);
+  window._docZoom = 1;
+}
+
+let _docPagina = 1;
+function documentos_zoom(delta) {
+  const el = document.getElementById('doc-viewer-pagina');
+  const bar = document.getElementById('doc-zoom-bar');
+  const lbl = document.getElementById('doc-zoom-label');
+  if (!el) return;
+  window._docZoom = Math.max(0.5, Math.min(3, window._docZoom + delta));
+  el.style.transform = 'scale('+window._docZoom+')';
+  const pct = ((window._docZoom - 0.5) / 2.5) * 100;
+  bar.style.width = pct + '%';
+  lbl.textContent = Math.round(window._docZoom * 100) + '%';
+}
+function documentos_fecharViewer() { const v = document.getElementById('doc-viewer'); if (v) v.remove(); }
+
+function documentos_compartilhar(id) {
+  const d = documentos_dados.find(x=>x.id===id);
+  if (!d) return;
+  const html = `<div class="p-4">
+    <p class="text-sm text-gray-600 mb-3 text-center">Compartilhar <strong class="text-marca-900">${d.nome}</strong></p>
+    <div class="grid grid-cols-4 gap-3">
+      <button onclick="documentos_compartilharAcao('whatsapp')" class="flex flex-col items-center gap-1.5 py-3 rounded-xl hover:bg-green-50 transition active:scale-95">
+        <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center shadow-md">
+          <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </div>
+        <span class="text-[11px] text-gray-600 font-medium">WhatsApp</span>
+      </button>
+      <button onclick="documentos_compartilharAcao('email')" class="flex flex-col items-center gap-1.5 py-3 rounded-xl hover:bg-blue-50 transition active:scale-95">
+        <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center shadow-md">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        </div>
+        <span class="text-[11px] text-gray-600 font-medium">E-mail</span>
+      </button>
+      <button onclick="documentos_compartilharAcao('imprimir')" class="flex flex-col items-center gap-1.5 py-3 rounded-xl hover:bg-gray-50 transition active:scale-95">
+        <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center shadow-md">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+        </div>
+        <span class="text-[11px] text-gray-600 font-medium">Imprimir</span>
+      </button>
+      <button onclick="documentos_compartilharAcao('copiar')" class="flex flex-col items-center gap-1.5 py-3 rounded-xl hover:bg-gray-50 transition active:scale-95">
+        <div class="w-12 h-12 bg-gray-500 rounded-full flex items-center justify-center shadow-md">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+        </div>
+        <span class="text-[11px] text-gray-600 font-medium">Copiar</span>
+      </button>
+    </div>
+    <button onclick="fecharModal()" class="w-full mt-3 py-2.5 text-sm text-gray-500 hover:text-gray-700 transition">Cancelar</button>
+  </div>`;
+  abrirModal(html, 'Compartilhar Documento');
+}
+
+function documentos_compartilharAcao(meio) {
+  fecharModal();
+  const nomes = { whatsapp:'WhatsApp', email:'E-mail', imprimir:'Impressora', copiar:'Área de transferência' };
+  toast('Documento enviado via ' + nomes[meio], 'ok');
+}
+
+function documentos_upload() {
+  const html = `<div class="p-5 space-y-4">
+    <div class="border-2 border-dashed border-marca-300 rounded-2xl p-6 text-center bg-marca-50/50 hover:bg-marca-50 transition cursor-pointer" onclick="documentos_simularCamera()">
+      <div class="w-16 h-16 mx-auto bg-marca-100 rounded-full flex items-center justify-center mb-3">
+        <svg class="w-8 h-8 text-marca-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      </div>
+      <p class="text-sm font-semibold text-marca-900">Tirar foto do documento</p>
+      <p class="text-xs text-gray-500 mt-1">A câmera será aberta para digitalizar</p>
+    </div>
+    <div class="relative flex py-2 items-center"><div class="flex-grow border-t border-gray-200"></div><span class="flex-shrink mx-4 text-gray-400 text-xs">ou</span><div class="flex-grow border-t border-gray-200"></div></div>
+    <button onclick="documentos_escolherArquivo()" class="w-full py-3 border border-marca-200 rounded-xl text-sm font-semibold text-marca-700 hover:bg-marca-50 transition active:scale-95 flex items-center justify-center gap-2">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      Escolher arquivo do dispositivo
+    </button>
+    <div class="space-y-2">
+      <label class="text-xs font-semibold text-gray-700 block">Tipo de documento</label>
+      <select class="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-marca-500">
+        <option>Contrato</option><option>Procuração</option><option>Petição</option><option>Comprovante</option><option>Outro</option>
+      </select>
+    </div>
+    <div class="space-y-2">
+      <label class="text-xs font-semibold text-gray-700 block">Cliente / Processo</label>
+      <select class="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-marca-500">
+        <option>Selecione...</option><option>Oliveira & Filhos — 001/2025</option><option>Maria Silva — 045/2025</option><option>Carlos Mendes — 078/2025</option><option>TechBrasil Ltda — 012/2025</option><option>Imobiliária Centro — 033/2025</option>
+      </select>
+    </div>
+    <button onclick="fecharModal();toast('Documento enviado com sucesso!','ok')" class="w-full bg-marca-600 text-white py-3 rounded-xl text-sm font-semibold active:scale-95 transition shadow-md">Salvar documento</button>
+  </div>`;
+  abrirModal(html, 'Novo Documento');
+}
+function documentos_simularCamera() { toast('Câmera aberta — posicione o documento','info'); }
+function documentos_escolherArquivo() { toast('Seletor de arquivos aberto','info'); }
+
+documentos_render();
+</script>
+
     <!-- TELAS -->
     </main>
 
