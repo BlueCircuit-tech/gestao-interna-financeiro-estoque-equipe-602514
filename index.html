@@ -1637,6 +1637,476 @@ function documentos_escolherArquivo() { toast('Seletor de arquivos aberto','info
 documentos_render();
 </script>
 
+    <section data-tela="financeiro" class="hidden">
+      <div class="mb-5">
+        <h1 class="text-2xl font-bold font-display text-slate-800 leading-tight">Financeiro</h1>
+        <p class="text-sm text-slate-500 mt-0.5">Visão geral do mês — Junho de 2025</p>
+      </div>
+
+      <div id="fin-kpi"></div>
+
+      <div class="card mb-4">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="font-display font-bold text-slate-700 text-base">Entradas vs Saídas</h2>
+          <span class="text-xs text-slate-400">Últimas 6 semanas</span>
+        </div>
+        <div id="fin-chart"></div>
+      </div>
+
+      <div class="flex gap-2 mb-4 overflow-x-auto pb-1 -mx-1 px-1" id="fin-filtros"></div>
+
+      <div id="fin-recebimentos" class="mb-4"></div>
+
+      <div id="fin-despesas" class="mb-20"></div>
+    </section>
+
+    <script>
+    (function() {
+      const NAV = ['painel','agenda','compromisso','clientes','cliente','documentos','financeiro','relatorios','equipe','chat-suporte'];
+      const catCores = { Honorário:'blue', Sucumbência:'amber', Custas:'rose', Folha:'purple' };
+      const catIcones = { Honorário:'§', Sucumbência:'⚖', Custas:'📋', Folha:'👥' };
+
+      const avatares = [
+        { ini:'MO', bg:'bg-blue-500' }, { ini:'CR', bg:'bg-emerald-500' },
+        { ini:'FS', bg:'bg-amber-500' }, { ini:'LP', bg:'bg-rose-500' },
+        { ini:'AM', bg:'bg-purple-500' }, { ini:'RB', bg:'bg-teal-500' },
+        { ini:'DV', bg:'bg-orange-500' }, { ini:'JC', bg:'bg-indigo-500' }
+      ];
+
+      let recebimentos = [
+        { id:'r1', tipo:'entrada', categoria:'Honorário', descricao:'Honorários iniciais — Caso Oliveira', cliente:'Roberto Oliveira', ini:'RO', bg:'bg-blue-500', valor:8500, data:'2025-06-28', vencimento:'2025-06-30', status:'pendente', historico:[{ data:'2025-06-10', acao:'Lançado', usuario:'Dr. Marcos' }] },
+        { id:'r2', tipo:'entrada', categoria:'Honorário', descricao:'Honorários — Revisional Ferreira', cliente:'Ana Ferreira', ini:'AF', bg:'bg-emerald-500', valor:12000, data:'2025-06-27', vencimento:'2025-07-05', status:'pendente', historico:[{ data:'2025-06-12', acao:'Lançado', usuario:'Dra. Carla' }] },
+        { id:'r3', tipo:'entrada', categoria:'Sucumbência', descricao:'Sucumbência — Processo Santos', cliente:'Paulo Santos', ini:'PS', bg:'bg-amber-500', valor:3200, data:'2025-06-26', vencimento:'2025-07-02', status:'pendente', historico:[{ data:'2025-06-08', acao:'Lançado', usuario:'Dr. Lucas' }] },
+        { id:'r4', tipo:'entrada', categoria:'Custas', descricao:'Reembolso custas cartorárias', cliente:'Maria Souza', ini:'MS', bg:'bg-rose-500', valor:450, data:'2025-06-25', vencimento:'2025-06-28', status:'atrasado', historico:[{ data:'2025-06-05', acao:'Lançado', usuario:'Dra. Carla' }] },
+        { id:'r5', tipo:'entrada', categoria:'Honorário', descricao:'Honorários de êxito — Mendes', cliente:'José Mendes', ini:'JM', bg:'bg-purple-500', valor:15500, data:'2025-06-29', vencimento:'2025-07-10', status:'pendente', historico:[{ data:'2025-06-15', acao:'Lançado', usuario:'Dr. Marcos' }] },
+        { id:'r6', tipo:'entrada', categoria:'Honorário', descricao:'Consultoria jurídica — TechNova', cliente:'TechNova Ltda', ini:'TN', bg:'bg-teal-500', valor:6200, data:'2025-06-30', vencimento:'2025-07-08', status:'pendente', historico:[{ data:'2025-06-20', acao:'Lançado', usuario:'Dr. Lucas' }] }
+      ];
+
+      let despesas = [
+        { id:'d1', tipo:'saida', categoria:'Folha', descricao:'Salários — Junho/2025', valor:22000, data:'2025-06-05', recorrente:true, historico:[{ data:'2025-06-05', acao:'Pago', usuario:'Dra. Carla' },{ data:'2025-05-05', acao:'Pago', usuario:'Dra. Carla' }] },
+        { id:'d2', tipo:'saida', categoria:'Custas', descricao:'Aluguel — Escritório Av. Paulista', valor:4500, data:'2025-06-01', recorrente:true, historico:[{ data:'2025-06-01', acao:'Pago', usuario:'Dr. Marcos' },{ data:'2025-05-01', acao:'Pago', usuario:'Dr. Marcos' }] },
+        { id:'d3', tipo:'saida', categoria:'Custas', descricao:'Licenças software jurídico', valor:890, data:'2025-06-03', recorrente:true, historico:[{ data:'2025-06-03', acao:'Pago', usuario:'Dr. Lucas' }] },
+        { id:'d4', tipo:'saida', categoria:'Custas', descricao:'Internet e telefone', valor:350, data:'2025-06-02', recorrente:true, historico:[{ data:'2025-06-02', acao:'Pago', usuario:'Dra. Carla' }] },
+        { id:'d5', tipo:'saida', categoria:'Custas', descricao:'Material de escritório', valor:420, data:'2025-06-15', recorrente:false, historico:[{ data:'2025-06-15', acao:'Pago', usuario:'Dr. Lucas' }] },
+        { id:'d6', tipo:'saida', categoria:'Custas', descricao:'Treinamento ADV System', valor:1500, data:'2025-06-20', recorrente:false, historico:[{ data:'2025-06-20', acao:'Aguardando aprovação', usuario:'Dra. Carla' }] },
+        { id:'d7', tipo:'saida', categoria:'Folha', descricao:'Vale-transporte — Junho', valor:1800, data:'2025-06-06', recorrente:true, historico:[{ data:'2025-06-06', acao:'Pago', usuario:'Dra. Carla' }] }
+      ];
+
+      function brl(v) { return 'R$ ' + Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2}); }
+      function dataBR(iso) { const d=new Date(iso+'T12:00:00'); return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}); }
+      function catCor(c) { const m={Honorário:'bg-blue-500',Sucumbência:'bg-amber-500',Custas:'bg-rose-500',Folha:'bg-purple-500'}; return m[c]||'bg-gray-400'; }
+      function catTexto(c) { const m={Honorário:'text-blue-600',Sucumbência:'text-amber-600',Custas:'text-rose-600',Folha:'text-purple-600'}; return m[c]||'text-gray-600'; }
+      function catBg(c) { const m={Honorário:'bg-blue-50',Sucumbência:'bg-amber-50',Custas:'bg-rose-50',Folha:'bg-purple-50'}; return m[c]||'bg-gray-50'; }
+      function catBorda(c) { const m={Honorário:'border-blue-200',Sucumbência:'border-amber-200',Custas:'border-rose-200',Folha:'border-purple-200'}; return m[c]||'border-gray-200'; }
+
+      const semanas = [
+        { label:'Sem 1', entrada:28200, saida:21000 },
+        { label:'Sem 2', entrada:35500, saida:19400 },
+        { label:'Sem 3', entrada:41800, saida:24000 },
+        { label:'Sem 4', entrada:32100, saida:20300 },
+        { label:'Sem 5', entrada:28900, saida:21200 },
+        { label:'Sem 6', entrada:47300, saida:22750 }
+      ];
+
+      function svgSemana(pct, cor, x, base, h, r) {
+        const bh = h * (pct / 100);
+        const y = base - bh;
+        return `<rect x="${x}" y="${y}" width="${r}" height="${bh}" rx="4" fill="${cor}" class="transition-all duration-300 hover:opacity-80"/>`;
+      }
+
+      function badgeStatus(s) {
+        if (s === 'pago') return '<span class="badge bg-emerald-100 text-emerald-700">Pago</span>';
+        if (s === 'pendente') return '<span class="badge bg-amber-100 text-amber-700">Pendente</span>';
+        if (s === 'atrasado') return '<span class="badge bg-rose-100 text-rose-700">Atrasado</span>';
+        return '';
+      }
+
+      function badgeCategoria(c) {
+        return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${catBg(c)} ${catTexto(c)}">${c}</span>`;
+      }
+
+      function iconeCategoria(c) {
+        return `<span class="w-6 h-6 rounded-lg ${catBg(c)} flex items-center justify-center text-xs flex-shrink-0">${catIcones[c]||'•'}</span>`;
+      }
+
+      function renderKPIs() {
+        const entradas = recebimentos.reduce((a,r) => a + r.valor, 0);
+        const saidas = despesas.reduce((a,d) => a + d.valor, 0);
+        const pendentes = recebimentos.filter(r => r.status === 'pendente').reduce((a,r) => a + r.valor, 0);
+        document.getElementById('fin-kpi').innerHTML = `
+          <div class="grid grid-cols-2 gap-3 mb-4">
+            <div class="card !p-4 active:scale-95 transition-transform cursor-pointer" onclick="toast('Visão geral carregada','info')">
+              <div class="flex items-center gap-2 mb-2">
+                <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+              </div>
+              <p class="text-xs text-slate-500 mb-0.5">Saldo do Mês</p>
+              <p class="text-xl font-bold text-emerald-600 font-display">${brl(47300 - 30710)}</p>
+              <div class="flex items-center gap-0.5 mt-1.5"><span class="text-xs text-emerald-500 font-medium">+8,2%</span><svg class="w-3 h-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg></div>
+            </div>
+            <div class="card !p-4 active:scale-95 transition-transform cursor-pointer" onclick="mostrarTela('relatorios')">
+              <div class="flex items-center gap-2 mb-2">
+                <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/></svg>
+                </div>
+              </div>
+              <p class="text-xs text-slate-500 mb-0.5">Receitas</p>
+              <p class="text-xl font-bold text-blue-600 font-display">${brl(entradas)}</p>
+              <div class="flex items-center gap-0.5 mt-1.5"><span class="text-xs text-blue-500 font-medium">+12,4%</span><svg class="w-3 h-3 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg></div>
+            </div>
+            <div class="card !p-4 active:scale-95 transition-transform cursor-pointer" onclick="mostrarTela('relatorios')">
+              <div class="flex items-center gap-2 mb-2">
+                <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/></svg>
+                </div>
+              </div>
+              <p class="text-xs text-slate-500 mb-0.5">Despesas</p>
+              <p class="text-xl font-bold text-rose-600 font-display">${brl(saidas)}</p>
+              <div class="flex items-center gap-0.5 mt-1.5"><span class="text-xs text-rose-500 font-medium">-3,1%</span><svg class="w-3 h-3 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg></div>
+            </div>
+            <div class="card !p-4 active:scale-95 transition-transform cursor-pointer" onclick="abrirModal(financeiro_detalhePendentes(),'Recebimentos Pendentes')">
+              <div class="flex items-center gap-2 mb-2">
+                <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+              </div>
+              <p class="text-xs text-slate-500 mb-0.5">Pendentes</p>
+              <p class="text-xl font-bold text-amber-600 font-display">${brl(pendentes)}</p>
+              <div class="flex items-center gap-0.5 mt-1.5"><span class="text-xs text-amber-500 font-medium">${recebimentos.filter(r=>r.status==='pendente').length} lançamentos</span></div>
+            </div>
+          </div>`;
+      }
+
+      function renderChart() {
+        const max = Math.max(...semanas.map(s => Math.max(s.entrada, s.saida)));
+        const h = 180, bw = 28, gap = 14, w = bw * 2 + gap;
+        const totalW = semanas.length * w + (semanas.length - 1) * 8;
+        const base = h - 30, leftP = 40;
+        const bars = semanas.map((s, i) => {
+          const x = leftP + i * (w + 8);
+          const pe = s.entrada / max * 100;
+          const ps = s.saida / max * 100;
+          return svgSemana(pe, '#2563EB', x, base, h, bw) + svgSemana(ps, '#f43f5e', x + bw + 2, base, h, bw);
+        });
+        const ticks = [0,0.25,0.5,0.75,1].map(t => { const v = t * max; const y = base - t * (base - 30); return `<text x="${leftP - 6}" y="${y+4}" text-anchor="end" class="text-[9px] fill-slate-400">${v >= 1000 ? (v/1000)+'k' : v}</text><line x1="${leftP}" y1="${y}" x2="${totalW}" y2="${y}" stroke="#e2e8f0" stroke-width="0.5" stroke-dasharray="3,3"/>`; }).join('');
+        const labels = semanas.map((s, i) => `<text x="${leftP + i*(w+8) + bw}" y="${h - 8}" text-anchor="middle" class="text-[10px] fill-slate-500 font-medium">${s.label}</text>`).join('');
+        document.getElementById('fin-chart').innerHTML = `
+          <svg viewBox="0 0 ${totalW + 8} ${h}" class="w-full" style="overflow:visible">
+            ${ticks}
+            ${bars}
+            <line x1="${leftP}" y1="${base}" x2="${totalW}" y2="${base}" stroke="#94a3b8" stroke-width="1"/>
+            <rect x="${leftP + semanas.length * (w + 8) + 6}" y="${base - h * (semanas[5].entrada / max) * 0.75}" width="10" height="12" rx="3" fill="#2563EB" opacity="0.9"/>
+            <rect x="${leftP + semanas.length * (w + 8) + 20}" y="${base - h * (semanas[5].saida / max) * 0.75}" width="10" height="12" rx="3" fill="#f43f5e" opacity="0.9"/>
+            ${labels}
+          </svg>
+          <div class="flex gap-4 mt-1 justify-center">
+            <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-blue-500"></div><span class="text-xs text-slate-500">Entradas</span></div>
+            <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-rose-500"></div><span class="text-xs text-slate-500">Saídas</span></div>
+          </div>`;
+      }
+
+      let filtroAtivo = 'todos';
+      const filtros = [
+        { id:'todos', label:'Todos' }, { id:'Honorário', label:'Honorários' },
+        { id:'Sucumbência', label:'Sucumbência' }, { id:'Custas', label:'Custas' }, { id:'Folha', label:'Folha' }
+      ];
+
+      function renderFiltros() {
+        document.getElementById('fin-filtros').innerHTML = filtros.map(f =>
+          `<button onclick="financeiro_setFiltro('${f.id}')" class="flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all active:scale-95 ${filtroAtivo===f.id?'bg-blue-600 text-white shadow-md shadow-blue-200':'bg-white text-slate-600 border border-slate-200 hover:border-blue-300 hover:text-blue-600'}">${f.label}</button>`
+        ).join('');
+      }
+
+      function financeiro_setFiltro(f) { filtroAtivo = f; renderFiltros(); renderRecebimentos(); }
+
+      function renderRecebimentos() {
+        let itens = filtroAtivo === 'todos' ? [...recebimentos] : recebimentos.filter(r => r.categoria === filtroAtivo);
+        const cont = document.getElementById('fin-recebimentos');
+        if (itens.length === 0) {
+          cont.innerHTML = `<div class="card !p-8 text-center"><div class="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-3"><svg class="w-8 h-8 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></div><p class="text-slate-500 text-sm font-medium">Nenhum lançamento encontrado</p><p class="text-slate-400 text-xs mt-1">Tente outro filtro</p></div>`;
+          return;
+        }
+        cont.innerHTML = `
+          <div class="flex items-center justify-between mb-2.5">
+            <h2 class="font-display font-bold text-slate-700 text-base">Recebimentos</h2>
+            <span class="text-xs text-slate-400">${itens.length} lançamento${itens.length!==1?'s':''}</span>
+          </div>
+          <div class="card divide-y divide-slate-100">
+            ${itens.map(r => `
+              <div class="flex items-center gap-3 p-3.5 active:bg-slate-50 transition-colors cursor-pointer" onclick="financeiro_detalheTransacao('${r.id}','entrada')">
+                <div class="w-10 h-10 rounded-xl ${r.bg} flex items-center justify-center text-white text-xs font-bold flex-shrink-0">${r.ini}</div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-semibold text-slate-800 truncate">${r.descricao}</p>
+                  <p class="text-xs text-slate-400 mt-0.5">${r.cliente} · Vence ${dataBR(r.vencimento)}</p>
+                </div>
+                <div class="text-right flex-shrink-0">
+                  <p class="text-sm font-bold text-emerald-600">+${brl(r.valor)}</p>
+                  <div class="mt-1">${badgeStatus(r.status)}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>`;
+      }
+
+      function renderDespesas() {
+        const total = despesas.reduce((a,d) => a + d.valor, 0);
+        document.getElementById('fin-despesas').innerHTML = `
+          <div class="flex items-center justify-between mb-2.5">
+            <h2 class="font-display font-bold text-slate-700 text-base">Despesas</h2>
+            <span class="text-xs text-slate-400">Total: ${brl(total)}</span>
+          </div>
+          <div class="card divide-y divide-slate-100">
+            ${despesas.map(d => `
+              <div class="flex items-center gap-3 p-3.5 active:bg-slate-50 transition-colors cursor-pointer" onclick="financeiro_detalheTransacao('${d.id}','saida')">
+                <div class="w-10 h-10 rounded-xl ${catBg(d.categoria)} flex items-center justify-center text-sm flex-shrink-0">${catIconeCategoriaSvg(d.categoria)}</div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-semibold text-slate-800 truncate">${d.descricao}</p>
+                  <div class="flex items-center gap-2 mt-1">${badgeCategoria(d.categoria)}${d.recorrente ? '<span class="text-[10px] text-slate-400">Recorrente</span>' : ''}</div>
+                </div>
+                <div class="text-right flex-shrink-0">
+                  <p class="text-sm font-bold text-rose-600">-${brl(d.valor)}</p>
+                  <p class="text-[11px] text-slate-400 mt-1">${dataBR(d.data)}</p>
+                </div>
+              </div>
+            `).join('')}
+          </div>`;
+      }
+
+      function catIconeSvg(c) {
+        const map = {
+          Honorário: '<svg class="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+          Sucumbência: '<svg class="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>',
+          Custas: '<svg class="w-4 h-4 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>',
+          Folha: '<svg class="w-4 h-4 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>'
+        };
+        return map[c] || map['Custas'];
+      }
+      function catIconeCategoriaSvg(c) { return catIconeSvg(c); }
+
+      function modalNovaTransacao(tipo) {
+        const titulo = tipo === 'entrada' ? 'Nova Receita' : 'Nova Despesa';
+        const cor = tipo === 'entrada' ? 'emerald' : 'rose';
+        abrirModal(`
+          <div class="p-5">
+            <div class="w-12 h-12 rounded-2xl ${tipo==='entrada'?'bg-emerald-100':'bg-rose-100'} flex items-center justify-center mx-auto mb-3">
+              <svg class="w-6 h-6 ${tipo==='entrada'?'text-emerald-600':'text-rose-600'}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${tipo==='entrada'?'M12 4v16m8-8H4':'M20 12H4'}"/></svg>
+            </div>
+            <h3 class="font-display font-bold text-slate-800 text-center text-lg mb-5">${titulo}</h3>
+            <form onsubmit="event.preventDefault();financeiro_salvarNovaTransacao('${tipo}')">
+              <div class="space-y-3">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Descrição</label>
+                  <input id="fin-nova-desc" type="text" placeholder="Ex: Honorários Caso Silva" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-700 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none transition-all" required>
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Cliente / Fornecedor</label>
+                  <input id="fin-nova-cliente" type="text" placeholder="Nome do cliente ou fornecedor" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-700 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none transition-all">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Valor</label>
+                    <input id="fin-nova-valor" type="text" placeholder="R$ 0,00" inputmode="decimal" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-700 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none transition-all" required oninput="this.value=this.value.replace(/[^\\d,]/g,'').replace(/(\\d)(?=(\\d{3})+(,|$))/g,'\\1.')">
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Data</label>
+                    <input id="fin-nova-data" type="date" value="${new Date().toISOString().split('T')[0]}" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-700 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none transition-all" required>
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Categoria</label>
+                  <div class="grid grid-cols-2 gap-2">
+                    ${Object.keys(catCores).map(c => `<label class="flex items-center gap-2 p-2.5 rounded-xl border ${tipo==='saida'&&c==='Honorário'?'opacity-40 pointer-events-none':''} border-slate-200 cursor-pointer hover:border-blue-300 transition-all has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50"><input type="radio" name="fin-nova-cat" value="${c}" ${c==='Honorário'?'checked':''} class="accent-blue-600"><span class="text-sm text-slate-700">${c}</span></label>`).join('')}
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Observação</label>
+                  <textarea rows="2" placeholder="Detalhes adicionais..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-700 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none transition-all resize-none"></textarea>
+                </div>
+              </div>
+              <div class="flex gap-2 mt-5">
+                <button type="button" onclick="fecharModal()" class="flex-1 py-2.5 rounded-xl text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 active:scale-95 transition-all">Cancelar</button>
+                <button type="submit" class="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white bg-${cor}-600 hover:bg-${cor}-700 active:scale-95 transition-all shadow-md">Lançar</button>
+              </div>
+            </form>
+          </div>
+        `, titulo);
+      }
+
+      function financeiro_salvarNovaTransacao(tipo) {
+        const desc = document.getElementById('fin-nova-desc').value.trim();
+        const cliente = document.getElementById('fin-nova-cliente').value.trim();
+        const valorStr = document.getElementById('fin-nova-valor').value.replace(/\./g,'').replace(',','.');
+        const valor = parseFloat(valorStr);
+        const data = document.getElementById('fin-nova-data').value;
+        const cat = document.querySelector('input[name="fin-nova-cat"]:checked').value;
+        if (!desc || isNaN(valor) || !data) { toast('Preencha todos os campos obrigatórios','erro'); return; }
+        const novo = {
+          id: tipo + '_' + Date.now(), tipo, categoria: cat, descricao: desc,
+          cliente: cliente || '—', ini: cliente ? cliente.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() : '--',
+          bg: 'bg-slate-400', valor, data, vencimento: data,
+          status: 'pendente', historico: [{ data, acao: tipo==='entrada'?'Lançado':'Registrado', usuario:'Você' }]
+        };
+        if (tipo === 'entrada') recebimentos.unshift(novo); else despesas.unshift(novo);
+        fecharModal();
+        renderKPIs(); renderChart(); renderRecebimentos(); renderDespesas();
+        toast(tipo==='entrada'?'Receita lançada com sucesso':'Despesa registrada com sucesso','ok');
+      }
+
+      function financeiro_detalheTransacao(id, tipo) {
+        const lista = tipo === 'entrada' ? recebimentos : despesas;
+        const item = lista.find(x => x.id === id);
+        if (!item) return;
+        const bg = item.bg || 'bg-slate-400';
+        const cor = item.status === 'pago' ? 'emerald' : item.status === 'atrasado' ? 'rose' : 'amber';
+        const statusLabel = item.status === 'pago' ? 'Pago' : item.status === 'atrasado' ? 'Atrasado' : 'Pendente';
+        const historicoHtml = item.historico.map(h => `
+          <div class="flex gap-3">
+            <div class="w-2 h-2 rounded-full ${cor==='emerald'?'bg-emerald-400':cor==='rose'?'bg-rose-400':'bg-amber-400'} mt-1.5 flex-shrink-0"></div>
+            <div class="flex-1 pb-3 border-b border-slate-100 last:border-0">
+              <p class="text-sm text-slate-700">${h.acao}</p>
+              <p class="text-xs text-slate-400 mt-0.5">${dataBR(h.data)} · ${h.usuario}</p>
+            </div>
+          </div>
+        `).join('');
+        const corBorder = item.tipo === 'entrada' ? 'border-emerald-200' : 'border-rose-200';
+        const corBg = item.tipo === 'entrada' ? 'bg-emerald-50' : 'bg-rose-50';
+        const corText = item.tipo === 'entrada' ? 'text-emerald-700' : 'text-rose-700';
+        const corValor = item.tipo === 'entrada' ? 'text-emerald-600' : 'text-rose-600';
+        const sinal = item.tipo === 'entrada' ? '+' : '-';
+        const botoesAcao = item.tipo === 'entrada' && item.status !== 'pago' ?
+          `<button onclick="financeiro_darBaixa('${item.id}')" class="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 active:scale-95 transition-all">Dar Baixa</button>` :
+          `<button onclick="fecharModal()" class="flex-1 py-2.5 rounded-xl text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 active:scale-95 transition-all">Fechar</button>`;
+        const comprovanteHtml = item.tipo === 'entrada' ? `
+          <div class="mt-4 pt-4 border-t border-slate-100">
+            <p class="text-xs font-semibold text-slate-500 mb-2">Comprovante</p>
+            <div class="w-full h-32 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl flex flex-col items-center justify-center border-2 border-dashed border-slate-300">
+              <svg class="w-8 h-8 text-slate-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              <span class="text-xs text-slate-400">Comprovante.pdf</span>
+            </div>
+          </div>` : '';
+
+        abrirModal(`
+          <div class="p-5">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-12 h-12 rounded-2xl ${bg} flex items-center justify-center text-white text-sm font-bold flex-shrink-0">${item.ini}</div>
+              <div class="flex-1 min-w-0">
+                <h3 class="font-display font-bold text-slate-800 text-base leading-tight">${item.descricao}</h3>
+                <p class="text-xs text-slate-500 mt-0.5">${item.cliente}</p>
+              </div>
+              <div class="text-right">
+                <p class="text-lg font-bold ${corValor} font-display">${sinal}${brl(item.valor)}</p>
+                <div class="mt-1">${badgeStatus(item.status)}</div>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-2 mb-4">
+              ${badgeCategoria(item.categoria)}
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${corBg} ${corText}">${statusLabel}</span>
+              ${item.recorrente ? '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-600">Recorrente</span>' : ''}
+            </div>
+            <div class="grid grid-cols-2 gap-3 mb-4">
+              <div class="bg-slate-50 rounded-xl p-3"><p class="text-[11px] text-slate-400 uppercase tracking-wide">Data</p><p class="text-sm font-semibold text-slate-700 mt-0.5">${dataBR(item.data)}</p></div>
+              ${item.vencimento ? `<div class="bg-slate-50 rounded-xl p-3"><p class="text-[11px] text-slate-400 uppercase tracking-wide">Vencimento</p><p class="text-sm font-semibold text-slate-700 mt-0.5">${dataBR(item.vencimento)}</p></div>` : ''}
+            </div>
+            ${comprovanteHtml}
+            <div class="mt-4 pt-4 border-t border-slate-100">
+              <p class="text-xs font-semibold text-slate-500 mb-3">Histórico</p>
+              <div class="max-h-36 overflow-y-auto pr-1">${historicoHtml}</div>
+            </div>
+            <div class="flex gap-2 mt-4 pt-4 border-t border-slate-100">
+              ${botoesAcao}
+              ${item.tipo==='entrada'&&item.status!=='pago' ? `<button onclick="financeiro_excluirTransacao('${item.id}','${item.tipo}')" class="py-2.5 px-4 rounded-xl text-sm font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 active:scale-95 transition-all">Excluir</button>` : ''}
+            </div>
+          </div>
+        `, 'Detalhe da Transação');
+      }
+
+      function financeiro_darBaixa(id) {
+        const item = recebimentos.find(r => r.id === id);
+        if (!item) return;
+        item.status = 'pago';
+        item.historico.push({ data: new Date().toISOString().split('T')[0], acao: 'Baixa registrada', usuario: 'Você' });
+        fecharModal();
+        renderKPIs(); renderRecebimentos(); renderDespesas();
+        toast('Recebimento dado baixa com sucesso!','ok');
+      }
+
+      function financeiro_excluirTransacao(id, tipo) {
+        abrirModal(`
+          <div class="p-5 text-center">
+            <div class="w-14 h-14 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <svg class="w-7 h-7 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </div>
+            <h3 class="font-display font-bold text-slate-800 text-lg mb-1">Excluir transação?</h3>
+            <p class="text-sm text-slate-500 mb-5">Esta ação não pode ser desfeita.</p>
+            <div class="flex gap-2">
+              <button onclick="fecharModal()" class="flex-1 py-2.5 rounded-xl text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 active:scale-95 transition-all">Cancelar</button>
+              <button onclick="financeiro_confirmarExclusao('${id}','${tipo}')" class="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white bg-rose-600 hover:bg-rose-700 active:scale-95 transition-all">Excluir</button>
+            </div>
+          </div>
+        `, 'Confirmar Exclusão');
+      }
+
+      function financeiro_confirmarExclusao(id, tipo) {
+        if (tipo === 'entrada') recebimentos = recebimentos.filter(r => r.id !== id);
+        else despesas = despesas.filter(d => d.id !== id);
+        fecharModal();
+        renderKPIs(); renderChart(); renderRecebimentos(); renderDespesas();
+        toast('Transação excluída','info');
+      }
+
+      function financeiro_detalhePendentes() {
+        return `<div class="p-4 space-y-3">
+          ${recebimentos.filter(r=>r.status==='pendente').map(r=>`
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-50">
+              <div class="w-9 h-9 rounded-lg ${r.bg} flex items-center justify-center text-white text-xs font-bold flex-shrink-0">${r.ini}</div>
+              <div class="flex-1 min-w-0"><p class="text-sm font-medium text-slate-700 truncate">${r.descricao}</p><p class="text-xs text-slate-400">${r.cliente}</p></div>
+              <p class="text-sm font-bold text-emerald-600 flex-shrink-0">+${brl(r.valor)}</p>
+            </div>
+          `).join('')}
+          <p class="text-center text-xs text-slate-400 pt-2">${recebimentos.filter(r=>r.status==='pendente').length} pendente(s)</p>
+        </div>`;
+      }
+
+      function initFAB() {
+        const fab = document.createElement('div');
+        fab.className = 'fixed bottom-6 right-4 z-50 flex flex-col items-end gap-2';
+        fab.innerHTML = `
+          <div id="fin-fab-ops" class="flex flex-col items-end gap-2 mb-2 hidden">
+            <button onclick="abrirModal(financeiro_modalNovaTransacao('entrada'));document.getElementById('fin-fab-ops').classList.add('hidden');document.getElementById('fin-fab-main').querySelector('svg').style.transform='rotate(0deg)'" class="flex items-center gap-2 active:scale-95 transition-all">
+              <span class="bg-white text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-lg shadow-lg">Nova Receita</span>
+              <div class="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg shadow-emerald-200"><svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg></div>
+            </button>
+            <button onclick="abrirModal(financeiro_modalNovaTransacao('saida'));document.getElementById('fin-fab-ops').classList.add('hidden');document.getElementById('fin-fab-main').querySelector('svg').style.transform='rotate(0deg)'" class="flex items-center gap-2 active:scale-95 transition-all">
+              <span class="bg-white text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-lg shadow-lg">Nova Despesa</span>
+              <div class="w-10 h-10 bg-rose-500 rounded-full flex items-center justify-center shadow-lg shadow-rose-200"><svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg></div>
+            </button>
+          </div>
+          <button id="fin-fab-main" onclick="const ops=document.getElementById('fin-fab-ops');ops.classList.toggle('hidden');this.querySelector('svg').style.transform=ops.classList.contains('hidden')?'rotate(0deg)':'rotate(45deg)'" class="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center shadow-xl shadow-blue-200 active:scale-90 transition-all">
+            <svg class="w-6 h-6 text-white transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+          </button>`;
+        document.body.appendChild(fab);
+      }
+
+      financeiro_modalNovaTransacao = modalNovaTransacao;
+      financeiro_detalheTransacao = financeiro_detalheTransacao;
+      financeiro_darBaixa = financeiro_darBaixa;
+      financeiro_excluirTransacao = financeiro_excluirTransacao;
+      financeiro_confirmarExclusao = financeiro_confirmarExclusao;
+      financeiro_setFiltro = financeiro_setFiltro;
+      financeiro_salvarNovaTransacao = financeiro_salvarNovaTransacao;
+
+      window._initFinanceiro = function() {
+        renderKPIs();
+        renderChart();
+        renderFiltros();
+        renderRecebimentos();
+        renderDespesas();
+        initFAB();
+      };
+    })();
+    </script>
+
     <!-- TELAS -->
     </main>
 
