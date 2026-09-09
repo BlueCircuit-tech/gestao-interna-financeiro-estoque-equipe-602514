@@ -2897,6 +2897,323 @@ mostrarTela = function(id) {
 };
 </script>
 
+    <section data-tela="chat-suporte" class="hidden">
+      <div id="chat-lista-view">
+        <div class="px-5 pt-2 pb-4">
+          <h1 class="font-display text-2xl font-bold text-slate-800">Chat</h1>
+          <p class="text-sm text-slate-500 mt-0.5">Canais, mensagens e suporte</p>
+        </div>
+
+        <div class="px-5 pb-3">
+          <div class="relative">
+            <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input id="chat-busca" type="text" placeholder="Buscar conversa..." class="w-full pl-10 pr-4 py-2.5 bg-slate-100 rounded-xl text-sm text-slate-700 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-marca-500 focus:bg-white transition-all" oninput="chat_suporte_buscar(this.value)">
+          </div>
+        </div>
+
+        <div class="px-5 pb-2 flex gap-2 overflow-x-auto no-scrollbar" style="scrollbar-width:none;">
+          <button onclick="chat_suporte_filtro('todos')" id="filtro-todos" class="chat-s filtro-chip active-chip shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition-all">Todos</button>
+          <button onclick="chat_suporte_filtro('canais')" id="filtro-canais" class="chat-s filtro-chip shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition-all bg-slate-100 text-slate-500">Canais</button>
+          <button onclick="chat_suporte_filtro('diretas')" id="filtro-diretas" class="chat-s filtro-chip shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition-all bg-slate-100 text-slate-500">Diretas</button>
+          <button onclick="chat_suporte_filtro('suporte')" id="filtro-suporte" class="chat-s filtro-chip shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition-all bg-slate-100 text-slate-500">Suporte</button>
+        </div>
+
+        <div id="chat-conversas-lista" class="px-5 pb-24 space-y-1 mt-2 overflow-y-auto" style="max-height:calc(100vh - 200px);"></div>
+      </div>
+
+      <div id="chat-conversa-view" class="hidden flex flex-col h-full">
+        <div id="chat-cabecalho" class="shrink-0 px-4 py-3 bg-white/80 backdrop-blur-md border-b border-slate-100 flex items-center gap-3 sticky top-0 z-10"></div>
+        <div id="chat-mensagens" class="flex-1 overflow-y-auto px-4 py-4 space-y-3" style="max-height:calc(100vh - 220px);"></div>
+        <div class="shrink-0 px-3 py-3 bg-white border-t border-slate-100">
+          <div class="flex items-end gap-2">
+            <div class="flex gap-1">
+              <button onclick="chat_suporte_acaoAnexo('foto')" class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-marca-50 hover:text-marca-600 transition-all active:scale-90" title="Foto">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+              </button>
+              <button onclick="chat_suporte_acaoAnexo('documento')" class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-marca-50 hover:text-marca-600 transition-all active:scale-90" title="Documento">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              </button>
+              <button onclick="chat_suporte_acaoAnexo('audio')" class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-marca-50 hover:text-marca-600 transition-all active:scale-90" title="Áudio">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+              </button>
+              <button onclick="chat_suporte_acaoAnexo('localizacao')" class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-marca-50 hover:text-marca-600 transition-all active:scale-90 hidden sm:flex" title="Localização">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </button>
+            </div>
+            <div class="flex-1 relative">
+              <input id="chat-input-msg" type="text" placeholder="Digite uma mensagem..." class="w-full px-4 py-2.5 bg-slate-100 rounded-2xl text-sm text-slate-700 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-marca-500 focus:bg-white transition-all" onkeydown="if(event.key==='Enter')chat_suporte_enviar()">
+            </div>
+            <button onclick="chat_suporte_enviar()" class="w-10 h-10 flex items-center justify-center rounded-full bg-marca-500 text-white hover:bg-marca-600 active:scale-90 transition-all shadow-lg shadow-marca-500/30">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+    const chat_suporte_conversas = [
+      {id:'geral',tipo:'canal',nome:'#geral',desc:'Comunicados do escritório',cor:'#2563EB',bg:'bg-blue-500',iniciais:'GE',online:false,unread:3,mensagens:[
+        {de:'Dra. Camila',texto:'Pessoal, lembrem-se que sexta-feira temos a reunião de fechamento do mês. Por favor, enviem os relatórios até quinta às 18h.',hora:'08:32',tipo:'recebida',data:'2026-03-09'},
+        {de:'Dr. Ricardo',texto:'Combinado! Já estou ajustando o relatório financeiro.',hora:'08:45',tipo:'recebida',data:'2026-03-09'},
+        {de:'Ana Beatriz',texto:'Pessoal, lembrete: os honorários do processo 00421/2024 foram atualizados no sistema. Verifiquem seus clientes.',hora:'10:15',tipo:'recebida',data:'2026-03-09'},
+        {de:'Você',texto:'Perfeito, obrigada pelo aviso!',hora:'10:20',tipo:'enviada',data:'2026-03-09'},
+        {de:'Dra. Camila',texto:'E não esqueçam: o alvará do cliente Mendes saiu ontem. Carlos, por favor, entre em contato com ele.',hora:'11:05',tipo:'recebida',data:'2026-03-09'}
+      ]},
+      {id:'juridica',tipo:'canal',nome:'#equipe-jurídica',desc:'Discussões jurídicas',cor:'#7C3AED',bg:'bg-violet-500',iniciais:'EJ',online:false,unread:1,mensagens:[
+        {de:'Dr. Ricardo',texto:'Alguém já analisou a sentença do processo 00782? Estou com dúvidas sobre a fundamentação.',hora:'09:10',tipo:'recebida',data:'2026-03-09'},
+        {de:'Carlos M.',texto:'Sim, eu vi ontem. A fundamentação está fraca, podemos recorrer. Vou preparar as razões.',hora:'09:25',tipo:'recebida',data:'2026-03-09'},
+        {de:'Você',texto:'Ótima notícia! Vou incluir o andamento no processo.',hora:'09:30',tipo:'enviada',data:'2026-03-09'},
+        {de:'Dra. Camila',texto:'Importante: cliente Oliveira entrou com recurso extraordinário. Prazo de 15 dias.',hora:'14:20',tipo:'recebida',data:'2026-03-09'}
+      ]},
+      {id:'financeiro',tipo:'canal',nome:'#financeiro',desc:'Orçamentos e faturamento',cor:'#059669',bg:'bg-emerald-500',iniciais:'FI',online:false,unread:0,mensagens:[
+        {de:'Ana Beatriz',texto:'Os honorários de março foram fechados: R$ 47.250 no total. Detalhamento no relatório financeiro.',hora:'07:45',tipo:'recebida',data:'2026-03-08'},
+        {de:'Você',texto:'Perfeito! Vou revisar os lançamentos.',hora:'08:00',tipo:'enviada',data:'2026-03-08'},
+        {de:'Ana Beatriz',texto:'Despesas do mês: R$ 12.380 (aluguel, softwares, materiais). Resultado líquido positivo.',hora:'17:30',tipo:'recebida',data:'2026-03-09'}
+      ]},
+      {id:'secretaria',tipo:'canal',nome:'#secretaria',desc:'Agenda e atendimentos',cor:'#D97706',bg:'bg-amber-500',iniciais:'SE',online:false,unread:5,mensagens:[
+        {de:'Marina S.',texto:'Bom dia! Hoje temos 6 audiências agendadas. Lembrete: cliente Souza comparece às 10h.',hora:'08:00',tipo:'recebida',data:'2026-03-09'},
+        {de:'Marina S.',texto:'Cliente Pereira ligou pedindo para remarcar. Dr. Ricardo, disponível às 14h?',hora:'08:30',tipo:'recebida',data:'2026-03-09'},
+        {de:'Marina S.',texto:'Documentos do processo 00231 chegaram do fórum. Deixei na sua mesa, Dr. Ricardo.',hora:'09:00',tipo:'recebida',data:'2026-03-09'},
+        {de:'Marina S.',texto:'⚠️ Cliente Santos tem audiência amanhã e ainda não confirmou presença!',hora:'09:15',tipo:'recebida',data:'2026-03-09'},
+        {de:'Marina S.',texto:'Chegaram os alvarás dos processos 00512 e 00519. Estou organizando para retirada.',hora:'09:45',tipo:'recebida',data:'2026-03-09'}
+      ]},
+      {id:'dm-carlos',tipo:'diretamensagem',nome:'Carlos M.',desc:'Advogado pleno',cor:'#DC2626',bg:'bg-red-500',iniciais:'CM',online:true,unread:2,mensagens:[
+        {de:'Carlos M.',texto:'Bom dia! Consegue revisar o contrato do cliente Lima? É o caso de divórcio.',hora:'08:15',tipo:'recebida',data:'2026-03-09'},
+        {de:'Você',texto:'Claro! Vou pegar agora.',hora:'08:20',tipo:'enviada',data:'2026-03-09'},
+        {de:'Carlos M.',texto:'Obrigado! Preciso que fique pronto até amanhã à tarde.',hora:'08:22',tipo:'recebida',data:'2026-03-09'},
+        {de:'Carlos M.',texto:'Ah, também precisa atualizar o valor dos honorários no sistema.',hora:'08:25',tipo:'recebida',data:'2026-03-09'}
+      ]},
+      {id:'dm-marina',tipo:'diretamensagem',nome:'Marina S.',desc:'Secretária',cor:'#2563EB',bg:'bg-blue-500',iniciais:'MS',online:true,unread:1,mensagens:[
+        {de:'Marina S.',texto:'Oi! O cliente Ferreira entrou em contato perguntando sobre o andamento do caso. Pode me passar um resumo?',hora:'11:00',tipo:'recebida',data:'2026-03-09'},
+        {de:'Você',texto:'Claro! O processo está na fase de contestação. Vou preparar um resumo.',hora:'11:05',tipo:'enviada',data:'2026-03-09'}
+      ]},
+      {id:'dm-ana',tipo:'diretamensagem',nome:'Ana Beatriz',desc:'Financeiro',cor:'#059669',bg:'bg-emerald-500',iniciais:'AB',online:false,unread:0,mensagens:[
+        {de:'Você',texto:'Ana, os recibos de fevereiro foram emitidos?',hora:'16:00',tipo:'enviada',data:'2026-03-08'},
+        {de:'Ana Beatriz',texto:'Sim! Todos os 23 clientes foram notificados por e-mail.',hora:'16:15',tipo:'recebida',data:'2026-03-08'},
+        {de:'Você',texto:'Perfeito! Alguém já entrou com pedido de renegociação?',hora:'16:20',tipo:'enviada',data:'2026-03-08'},
+        {de:'Ana Beatriz',texto:'Ainda não, mas o cliente Almeida perguntou sobre parcelamento.',hora:'16:25',tipo:'recebida',data:'2026-03-08'}
+      ]},
+      {id:'suporte',tipo:'suporte',nome:'💬 Suporte BlueCircuit',desc:'Software house parceira',cor:'#2563EB',bg:'bg-blue-500',iniciais:'BC',online:true,unread:0,mensagens:[
+        {de:'Suporte BlueCircuit',texto:'Olá! Obrigado por escolher a BlueCircuit. Estamos aqui para ajudar com qualquer dúvida sobre o sistema.',hora:'14:00',tipo:'recebida',data:'2026-03-09'},
+        {de:'Você',texto:'Oi! Tenho uma dúvida sobre o cadastro de clientes. Consigo importar dados de uma planilha?',hora:'14:10',tipo:'enviada',data:'2026-03-09'},
+        {de:'Suporte BlueCircuit',texto:'Claro! Vá em Configurações > Importar Dados e envie o arquivo CSV. Se precisar, nosso template está disponível.',hora:'14:12',tipo:'recebida',data:'2026-03-09'}
+      ]}
+    ];
+
+    let chat_suporte_ativa = null;
+    let chat_suporte_filtroAtual = 'todos';
+
+    function chat_suporte_renderLista() {
+      const container = document.getElementById('chat-conversas-lista');
+      const busca = (document.getElementById('chat-busca')?.value || '').toLowerCase();
+      let filtradas = chat_suporte_conversas.filter(c => {
+        if (chat_suporte_filtroAtual === 'canais') return c.tipo === 'canal';
+        if (chat_suporte_filtroAtual === 'diretas') return c.tipo === 'diretamensagem';
+        if (chat_suporte_filtroAtual === 'suporte') return c.tipo === 'suporte';
+        return true;
+      });
+      if (busca) filtradas = filtradas.filter(c => c.nome.toLowerCase().includes(busca) || c.desc.toLowerCase().includes(busca));
+
+      if (filtradas.length === 0) {
+        container.innerHTML = '<div class="text-center py-16"><svg class="w-16 h-16 mx-auto text-slate-300 mb-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><p class="text-slate-400 text-sm">Nenhuma conversa encontrada</p></div>';
+        return;
+      }
+
+      container.innerHTML = filtradas.map(c => {
+        const ult = c.mensagens[c.mensagens.length - 1];
+        const online = c.online;
+        return `<div onclick="chat_suporte_abrirConversa('${c.id}')" class="flex items-center gap-3.5 p-3.5 rounded-2xl hover:bg-slate-50 active:bg-slate-100 cursor-pointer transition-all group" data-conv-id="${c.id}">
+          <div class="relative shrink-0">
+            <div class="w-12 h-12 rounded-full ${c.bg} flex items-center justify-center text-white font-bold text-sm shadow-md">${c.iniciais}</div>
+            ${online ? '<span class="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-400 border-2 border-white rounded-full"></span>' : ''}
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <span class="font-semibold text-sm text-slate-800 truncate">${c.nome}</span>
+              <span class="text-[10px] text-slate-400 shrink-0 ml-2">${ult.hora}</span>
+            </div>
+            <p class="text-xs text-slate-500 truncate mt-0.5 ${c.unread > 0 ? 'font-medium text-slate-700' : ''}">${ult.texto.length > 45 ? ult.texto.slice(0, 45) + '...' : ult.texto}</p>
+            <span class="text-[10px] text-slate-400">${c.desc}</span>
+          </div>
+          <div class="flex flex-col items-center gap-1 shrink-0">
+            ${c.unread > 0 ? `<span class="w-5 h-5 rounded-full bg-marca-500 text-white text-[10px] font-bold flex items-center justify-center">${c.unread}</span>` : ''}
+            <svg class="w-4 h-4 text-slate-300 group-hover:text-marca-500 transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    function chat_suporte_abrirConversa(id) {
+      const conv = chat_suporte_conversas.find(c => c.id === id);
+      if (!conv) return;
+      chat_suporte_ativa = conv;
+      conv.unread = 0;
+      const view = document.getElementById('chat-conversa-view');
+      const listaView = document.getElementById('chat-lista-view');
+      view.classList.remove('hidden');
+      listaView.classList.add('hidden');
+      const cab = document.getElementById('chat-cabecalho');
+      cab.innerHTML = `<button onclick="chat_suporte_voltar()" class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-100 transition-all active:scale-90 shrink-0">
+        <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="relative shrink-0 cursor-pointer" onclick="chat_suporte_abrirPerfil('${conv.id}')">
+        <div class="w-10 h-10 rounded-full ${conv.bg} flex items-center justify-center text-white font-bold text-sm">${conv.iniciais}</div>
+        ${conv.online ? '<span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-400 border-2 border-white rounded-full"></span>' : ''}
+      </div>
+      <div class="flex-1 min-w-0">
+        <span class="font-semibold text-sm text-slate-800 block truncate">${conv.nome}</span>
+        <span class="text-[11px] text-slate-400 block">${conv.online ? 'Online' : 'Offline'} · ${conv.desc}</span>
+      </div>
+      <button onclick="chat_suporte_maisOpcoes()" class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-100 transition-all active:scale-90 shrink-0">
+        <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
+      </button>`;
+      chat_suporte_renderMensagens();
+      chat_suporte_renderLista();
+    }
+
+    function chat_suporte_renderMensagens() {
+      const container = document.getElementById('chat-mensagens');
+      if (!chat_suporte_ativa) return;
+      container.innerHTML = chat_suporte_ativa.mensagens.map(m => {
+        if (m.tipo === 'enviada') {
+          return `<div class="flex justify-end"><div class="max-w-[78%] bg-marca-500 text-white px-4 py-2.5 rounded-2xl rounded-br-sm shadow-sm">
+            <p class="text-sm leading-relaxed">${m.texto}</p>
+            <span class="text-[10px] text-white/60 mt-1 block text-right">${m.hora}</span>
+          </div></div>`;
+        }
+        return `<div class="flex justify-start"><div class="max-w-[78%] bg-slate-100 text-slate-700 px-4 py-2.5 rounded-2xl rounded-bl-sm shadow-sm">
+          <p class="text-xs font-semibold text-marca-600 mb-1">${m.de}</p>
+          <p class="text-sm leading-relaxed">${m.texto}</p>
+          <span class="text-[10px] text-slate-400 mt-1 block">${m.hora}</span>
+        </div></div>`;
+      }).join('');
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function chat_suporte_enviar() {
+      const input = document.getElementById('chat-input-msg');
+      const texto = input.value.trim();
+      if (!texto) return;
+      if (!chat_suporte_ativa) return;
+      const now = new Date();
+      const hora = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+      chat_suporte_ativa.mensagens.push({de:'Você',texto:texto,hora:hora,tipo:'enviada',data:now.toISOString().split('T')[0]});
+      input.value = '';
+      chat_suporte_renderMensagens();
+      toast('Mensagem enviada','ok');
+      setTimeout(() => {
+        const respostas = [
+          {de:chat_suporte_ativa.nome.replace('💬 ',''),texto:'Recebi sua mensagem! Vou verificar e retorno em breve.'},
+          {de:chat_suporte_ativa.nome.replace('💬 ',''),texto:'Obrigado pelo contato! Já estou olhando.'},
+          {de:chat_suporte_ativa.nome.replace('💬 ',''),texto:'Perfeito, entendi! Qualquer dúvida estou à disposição.'}
+        ];
+        const r = respostas[Math.floor(Math.random()*respostas.length)];
+        const now2 = new Date();
+        const hora2 = now2.getHours().toString().padStart(2,'0') + ':' + now2.getMinutes().toString().padStart(2,'0');
+        chat_suporte_ativa.mensagens.push({...r,hora:hora2,tipo:'recebida',data:now2.toISOString().split('T')[0]});
+        chat_suporte_renderMensagens();
+      }, 1200 + Math.random() * 1500);
+    }
+
+    function chat_suporte_voltar() {
+      document.getElementById('chat-conversa-view').classList.add('hidden');
+      document.getElementById('chat-lista-view').classList.remove('hidden');
+      chat_suporte_ativa = null;
+      chat_suporte_renderLista();
+    }
+
+    function chat_suporte_acaoAnexo(tipo) {
+      const nomes = {foto:'📷 Foto anexada com sucesso!',documento:'📄 Documento selecionado!',audio:'🎤 Gravação de áudio iniciada',localização:'📍 Localização compartilhada'};
+      toast(nomes[tipo] || 'Anexo enviado','ok');
+    }
+
+    function chat_suporte_abrirPerfil(id) {
+      const conv = chat_suporte_conversas.find(c => c.id === id);
+      if (!conv) return;
+      const corBorda = conv.cor || '#2563EB';
+      abrirModal(`
+        <div class="text-center pt-4">
+          <div class="w-20 h-20 rounded-full ${conv.bg} flex items-center justify-center text-white font-bold text-2xl mx-auto shadow-lg" style="border:3px solid ${corBorda}30;">${conv.iniciais}</div>
+          <h3 class="font-display text-lg font-bold text-slate-800 mt-3">${conv.nome}</h3>
+          <p class="text-sm text-slate-500">${conv.desc}</p>
+          <div class="flex items-center justify-center gap-1.5 mt-1">
+            <span class="w-2.5 h-2.5 rounded-full ${conv.online ? 'bg-emerald-400' : 'bg-slate-300'}"></span>
+            <span class="text-xs ${conv.online ? 'text-emerald-600' : 'text-slate-400'}">${conv.online ? 'Online' : 'Offline'}</span>
+          </div>
+        </div>
+        <div class="mt-5 space-y-2">
+          <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold px-1">Ações</p>
+          <button onclick="chat_suporte_menciónar('${conv.nome}');fecharModal();" class="w-full flex items-center gap-3 px-4 py-3 bg-marca-50 hover:bg-marca-100 rounded-xl transition-all active:scale-95">
+            <svg class="w-5 h-5 text-marca-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-3l-4 4z"/></svg>
+            <span class="text-sm font-medium text-marca-700">Mencionar @${conv.nome.replace('#','')}</span>
+          </button>
+          <button onclick="toast('Mensagem fixada!','ok');fecharModal();" class="w-full flex items-center gap-3 px-4 py-3 bg-slate-50 hover:bg-slate-100 rounded-xl transition-all active:scale-95">
+            <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 12V4h1a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1"/><path d="M12 4v8"/><path d="M8 8l4-4 4 4"/></svg>
+            <span class="text-sm font-medium text-slate-700">Fixar conversa</span>
+          </button>
+          <button onclick="chat_suporte_silenciar('${conv.nome}');fecharModal();" class="w-full flex items-center gap-3 px-4 py-3 bg-slate-50 hover:bg-slate-100 rounded-xl transition-all active:scale-95">
+            <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+            <span class="text-sm font-medium text-slate-700">Silenciar notificações</span>
+          </button>
+        </div>
+        ${conv.tipo === 'diretamensagem' ? `<div class="mt-4 pt-4 border-t border-slate-100">
+          <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold px-1 mb-2">Informações</p>
+          <div class="bg-slate-50 rounded-xl p-3 space-y-2 text-sm">
+            <div class="flex justify-between"><span class="text-slate-500">Cargo</span><span class="text-slate-700 font-medium">${conv.desc}</span></div>
+            <div class="flex justify-between"><span class="text-slate-500">Status</span><span class="${conv.online ? 'text-emerald-600' : 'text-slate-500'} font-medium">${conv.online ? '🟢 Online' : '⚫ Offline'}</span></div>
+          </div>
+        </div>` : ''}
+      `, conv.nome);
+    }
+
+    function chat_suporte_menciónar(nome) {
+      toast('@' + nome.replace('#','') + ' mencionado!','ok');
+    }
+
+    function chat_suporte_silenciar(nome) {
+      toast('Notificações silenciadas para ' + nome,'info');
+    }
+
+    function chat_suporte_maisOpcoes() {
+      abrirModal(`
+        <div class="space-y-1">
+          <button onclick="toast('Pesquisar na conversa','info');fecharModal();" class="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 rounded-xl transition-all active:scale-95">
+            <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <span class="text-sm text-slate-700">Pesquisar na conversa</span>
+          </button>
+          <button onclick="toast('Mídias salvas!','ok');fecharModal();" class="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 rounded-xl transition-all active:scale-95">
+            <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            <span class="text-sm text-slate-700">Mídias e arquivos</span>
+          </button>
+          <button onclick="toast('Conversa limpa','ok');fecharModal();" class="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-50 rounded-xl transition-all active:scale-95">
+            <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            <span class="text-sm text-red-600">Limpar conversa</span>
+          </button>
+        </div>
+      `,'Mais opções');
+    }
+
+    function chat_suporte_filtro(f) {
+      chat_suporte_filtroAtual = f;
+      document.querySelectorAll('.chat-s.filtro-chip').forEach(b => {
+        b.classList.remove('bg-marca-500','text-white');
+        b.classList.add('bg-slate-100','text-slate-500');
+      });
+      const ativo = document.getElementById('filtro-' + f);
+      if (ativo) { ativo.classList.remove('bg-slate-100','text-slate-500'); ativo.classList.add('bg-marca-500','text-white'); }
+      chat_suporte_renderLista();
+    }
+
+    function chat_suporte_buscar(v) {
+      chat_suporte_renderLista();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      chat_suporte_renderLista();
+    });
+    </script>
+
     <!-- TELAS -->
     </main>
 
